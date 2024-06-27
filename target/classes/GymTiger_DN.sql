@@ -1,7 +1,7 @@
 USE [master]
 GO
-/****** Object:  Database [Nova_Store_DB]    Update: 13/1/2023 16:31 AM ******/
-CREATE DATABASE [Nova_Store_DB]
+/****** Object:  Database [GymTiger_DB]    Update: 13/1/2023 16:31 AM ******/
+CREATE DATABASE [GymTiger]
 GO
 USE [Nova_Store_DB]
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
