@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{/user/fragments::head}">
+</head>
+
+<body>
+    <div th:replace="~{/user/fragments::header}"></div>
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Liên hệ</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="">Trang chủ</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Liên hệ</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+    <!-- Contact Start -->
+    <div class="container-fluid pt-5">
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">Liên Hệ Với Cửa Hàng Chúng Tôi</span></h2>
+        </div>
+        <div class="row px-xl-5">
+            <div class="col-lg-12 mb-5">
+                <h5 class="font-weight-semi-bold mb-3">Liên Hệ</h5>
+                <p>Chúng tôi rất vui khi được phục vụ bạn. Hãy liên hệ với chúng tôi nếu bạn có bất kỳ câu hỏi hoặc yêu cầu nào.</p>
+                <div class="d-flex flex-column mb-3">
+                    <h5 class="font-weight-semi-bold mb-3">GymTiger Store</h5>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>Nam Từ Liêm, Hà Nội, Việt Nam</p>
+                    <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>GymTigercskh@gmail.com</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i>+0988 622 603</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contact End -->
+
+    <div th:replace="~{/user/fragments::footer}"></div>
+
+    <div th:replace="~{/user/fragments::script}"></div>
+
+</body>
+
+</html>

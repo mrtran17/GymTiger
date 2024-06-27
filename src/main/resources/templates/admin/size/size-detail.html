@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="font-weight: bold">CẬP NHẬT KÍCH CỠ</h5>
+            </div>
+            <div th:if="${error}">
+                <button hidden id="btnError" th:onclick="alertError([[${error}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnError = document.getElementById("btnError");
+                        btnError.click();
+                    }
+                    alertError = (content) => {
+                        Swal.fire({
+                            title: "Sửa dữ liệu thất bại",
+                            text: content,
+                            icon: "error",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                </script>
+            </div>
+            <div class="card-body card-block">
+                <form id="sizeUpdate" th:object="${size}" th:action="@{/tiger/size/update/{id}(id=${size.id})}" method="post"
+                      class="form-horizontal">
+                    <div class="row form-group">
+                        <div class="col col-md-3"><label class="font-weight-bold  form-control-label">Mã kích cỡ</label></div>
+                        <div class="col-12 col-md-9">
+                            <input type="text" id="code" name="code" th:field="*{code}" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col col-md-3"><label class="font-weight-bold  form-control-label">Kích cỡ</label></div>
+                        <div class="col-12 col-md-9"><input type="text" id="name" name="name" th:field="*{name}" class="form-control"
+                                                            oninput="onInputText('errorName')">
+                            <div class="" style="color: red"
+                                   id="errorName" ></div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button onclick="clickUpdate('sizeUpdate', 'name', 'errorName', 'tên kích cỡ')"
+                                type="button" class="btn btn-dark"><i class="fa-solid fa-pen px-4"></i>
+                        </button>
+                        <script th:inline="javascript">
+                            const inputElement = document.getElementById('name');
+
+                            inputElement.addEventListener('input', function(event) {
+                                const specialCharacters = /[!@#$%^&*()_,.?":{}|<>+\-=~`\\/\[\]]/g;
+                                const inputValue = event.target.value;
+                                if (specialCharacters.test(inputValue)) {
+                                    event.target.value = inputValue.replace(specialCharacters, '');
+                                }
+                            });
+
+                        </script>
+                        <a th:href="@{|/tiger/size/page|}">
+                            <button type="button" class="btn btn-warning"><i
+                                    class="fa-solid fa-circle-left px-4"></i>
+                            </button>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

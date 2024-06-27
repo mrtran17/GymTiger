@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{/user/fragments::head}">
+
+</head>
+
+<body>
+<div th:replace="~{/user/fragments::header}"></div>
+<!-- Page Header Start -->
+<div class="container-fluid bg-secondary mb-5">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">Thông tin tài khoản</h1>
+        <div class="d-inline-flex">
+            <p class="m-0"><a href="/home">Trang chủ</a></p>
+            <p class="m-0 px-2">-</p>
+            <p class="m-0">Thông tin tài khoản</p>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<div class="w-100 light-style flex-grow-1 container-p-y d-flex justify-content-center">
+
+    <div class="card overflow-hidden w-95">
+        <div class="row no-gutters ">
+            <div class="col-md-2 pt-0">
+                <div class="list-group list-group-flush account-settings-links">
+                    <a class="list-group-item list-group-item-action active title-profile" data-toggle="list"
+                       href="#account-general">Thông tin chung</a>
+                    <a class="list-group-item list-group-item-action title-profile" data-toggle="list"
+                       onclick=window.location.href='/change-password'>Đổi mật khẩu</a>
+                    <a class="list-group-item list-group-item-action title-profile" data-toggle="list"
+                       href="#account-info">Địa chỉ</a>
+                    <!--                    <a class="list-group-item list-group-item-action" data-toggle="list"-->
+                    <!--                       href="#account-social-links">Social links</a>-->
+                    <!--                    <a class="list-group-item list-group-item-action" data-toggle="list"-->
+                    <!--                       href="#account-connections">Connections</a>-->
+                    <!--                    <a class="list-group-item list-group-item-action" data-toggle="list"-->
+                    <!--                       href="#account-notifications">Notifications</a>-->
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="tab-content">
+                    <div class="tab-pane fade active show" id="account-general">
+                        <form th:object="${user}">
+                            <div class="card-body media align-items-center">
+                                <img th:src="@{'/image/account/' + ${user.id}}" alt class="d-block "
+                                     style="width: 90px; height: 90px">
+                                <div class=" ml-4 d-flex align-items-start">
+                                    <div class="mr-3">
+                                        <label class="btn btn-outline-primary">
+                                            Tải Ảnh Mới
+                                            <input type="file" hidden class="account-settings-fileinput">
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline-primary md-btn-flat">Đặt Lại
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="border-light m-0">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label title-profile">Họ tên</label>
+                                    <input name="name" type="text" class="form-control" th:field="*{name}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label title-profile">Email</label>
+                                    <input name="email" type="text" class="form-control mb-1" th:field="*{email}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label title-profile">Số Điện Thoại</label>
+                                    <input type="text" class="form-control mb-1" th:field="*{phoneNumber}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label title-profile">Ngày Sinh</label>
+                                    <input placeholder="Choose your Birthday" type="date" id="birthday"
+                                           class="form-control" name="birthday" th:field="*{birthday}">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="account-info">
+                        <form th:action="@{/user/address}" method="post" onsubmit="return vaildateAddress()">
+                            <div class="card-body pb-2">
+                                <div class="row no-gutters">
+                                    <div class="col-sm-4 pr-sm-2">
+                                        <div class="form-group">
+                                            <label for="customerName" class="title-profile mb-1">Họ tên</label>
+                                            <input type="text" class="form-control form-control"
+                                                   name="customerName" id="customerName"/>
+                                            <span id="nameError" class=" text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 pr-sm-2">
+                                        <div class="form-group">
+                                            <label for="phone-number" class="title-profile mb-1">Số điện
+                                                thoại</label>
+                                            <input type="text" class="form-control form-control"
+                                                   name="phoneNumber" id="phone-number">
+                                            <span id="phoneNumberError" class=" text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 pr-sm-2">
+                                        <div class="form-group">
+                                            <label for="specific-address" class="title-profile mb-1">Số nhà,
+                                                Đường</label>
+                                            <input type="text" class="form-control form-control"
+                                                   name="specificAddress" id="specific-address">
+                                            <span id="specificAddressError" class=" text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 pr-sm-2">
+                                        <div class="form-group">
+                                            <label for="city" class="title-profile mb-1">Tỉnh Thành</label>
+                                            <select class="form-control form-control" name="city" id="city">
+                                                <option value="" selected>Tỉnh thành</option>
+                                            </select>
+                                            <span id="cityError" class=" text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 pr-sm-2">
+                                        <div class="form-group">
+                                            <label for="district" class="title-profile mb-1">Quận huyện</label>
+                                            <select class="form-control form-control" name="district"
+                                                    id="district">
+                                                <option value="" selected>Quận huyện</option>
+                                            </select>
+                                            <span id="districtError" class=" text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 pr-sm-2">
+                                        <div class="form-group">
+                                            <label for="ward" class="title-profile mb-1">Phường xã</label>
+                                            <select class="form-control form-control" name="ward" id="ward">
+                                                <option value="" selected>Phường xã</option>
+                                            </select>
+                                            <span id="wardError" class=" text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-primary title-profile">Thêm địa chỉ</button>&nbsp;
+                            </div>
+                        </form>
+                        <hr class="border-light m-0">
+                        <div class="card-body pb-2">
+                            <h5 class="mb-4">Danh Sách Địa Chỉ</h5>
+                            <table class="table table-striped table-hover text-center">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Họ tên</th>
+                                    <th scope="col">Tỉnh thành</th>
+                                    <th scope="col">Quận huyện</th>
+                                    <th scope="col">Phường xã</th>
+                                    <th scope="col">Địa chỉ</th>
+                                    <th scope="col">Số điện thoại</th>
+                                    <th scope="col">Chức năng</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${defaultAddress}">
+                                    <td th:text="${defaultAddress.customerName}"></td>
+                                    <td th:text="${defaultAddress.city}"></td>
+                                    <td th:text="${defaultAddress.district}"></td>
+                                    <td th:text="${defaultAddress.ward}"></td>
+                                    <td th:text="${defaultAddress.specificAddress}"></td>
+                                    <td th:text="${defaultAddress.phoneNumber}"></td>
+                                    <td>
+                                        <a type="button"
+                                           th:href="@{'/user/makeDefault/' + ${defaultAddress.id}}"
+                                           class="btn btn-outline disabled" role="button"
+                                           aria-disabled="true">Mặc Định</a>
+                                        <a type="button" th:href="@{'/user/delete/' + ${defaultAddress.id}}"
+                                           class="btn btn-outline-danger disabled" role="button"
+                                           aria-disabled="true">Xoá</a>
+                                    </td>
+                                </tr>
+                                <tr th:each="x:${lstAddress}">
+                                    <td th:text="${x.customerName}"></td>
+                                    <td th:text="${x.city}"></td>
+                                    <td th:text="${x.district}"></td>
+                                    <td th:text="${x.ward}"></td>
+                                    <td th:text="${x.specificAddress}"></td>
+                                    <td th:text="${x.phoneNumber}"></td>
+                                    <td>
+                                        <a type="button" th:href="@{'/user/makeDefault/' + ${x.id}}"
+                                           class="btn btn-secondary">Mặc Định</a>
+                                        <a type="button" th:href="@{'/user/delete/' + ${x.id}}" class="btn
+                                        btn-danger">Xoá</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{/user/fragments::footer}"></div>
+
+<div th:replace="~{/user/fragments::script}"></div>
+<!--<script th:src="@{https://code.jquery.com/jquery-3.4.1.min.js}"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>-->
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js}"></script>
+<script>
+
+    function vaildateAddress() {
+
+        let hoTen = document.getElementById("customerName");
+        if (hoTen.value.trim() === '') {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng nhập tên!",
+            });
+            return false;
+        }
+
+        const phoneNumberRegex = /^(0[1-9]|84[1-9]|\\+84[1-9])[0-9]{8}$/;
+        let phoneNum = document.getElementById("phone-number");
+        if (phoneNum.value.trim() === '') {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng nhập số điện thoại!",
+            });
+            return false;
+        }
+
+        if (!phoneNumberRegex.test(phoneNum.value.trim())) {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng nhập đúng số điện thoại!",
+            });
+            return false;
+        }
+
+        let address = document.getElementById("specific-address");
+        if (address.value.trim() === '') {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng nhập địa chỉ!",
+            });
+            return false;
+        }
+
+        let city = document.getElementById("city");
+        if (city.value.trim() === '') {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng chọn thành phố!",
+            });
+            return false;
+        }
+
+        let district = document.getElementById("district");
+        if (district.value.trim() === '') {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng chọn quận huyện!",
+            });
+            return false;
+        }
+
+        let ward = document.getElementById("ward");
+        if (ward.value.trim() === '') {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Vui lòng chọn phường xã!",
+            });
+            return false;
+        }
+        return true;
+    }
+
+    const host = "https://provinces.open-api.vn/api/";
+
+    // var defaultCity = document.getElementById('defaultCity').value;
+    // var defaultDistrict = document.getElementById('defaultDistrict').value;
+    // var defaultWard = document.getElementById('defaultWard').value;
+
+    var callAPI = (api) => {
+        return axios.get(api)
+            .then((response) => {
+                renderData(response.data, "city");
+                // $("#city").val(defaultCity).change();
+            });
+    }
+    callAPI('https://provinces.open-api.vn/api/?depth=1');
+    var callApiDistrict = (api) => {
+        return axios.get(api)
+            .then((response) => {
+                renderData(response.data.districts, "district");
+                // $("#district").val(defaultDistrict).change();
+            });
+    }
+    var callApiWard = (api) => {
+        return axios.get(api)
+            .then((response) => {
+                renderData(response.data.wards, "ward");
+                // $("#ward").val(defaultWard);
+            });
+    }
+
+    var renderData = (array, select) => {
+        let row = ' <option disable value="">Chọn</option>';
+        array.forEach(element => {
+            row += `<option data-id="${element.code}" value="${element.name}">${element.name}</option>`
+        });
+        document.querySelector("#" + select).innerHTML = row
+    }
+
+    $("#city").change(() => {
+        callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+    });
+    $("#district").change(() => {
+        callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+    });
+</script>
+</body>
+
+</html>

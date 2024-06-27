@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="font-weight: bold">THÊM SẢN PHẨM</h5>
+            </div>
+            <div th:if="${mess}">
+                <button hidden id="btnSuccess" th:onclick="alertSuccess([[${mess}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnSuccess = document.getElementById("btnSuccess");
+                        btnSuccess.click();
+                    }
+                    alertSuccess = (content) => {
+                        Swal.fire({
+                            title: content,
+                            icon: "success",
+                            confirmButtonColor: "#0DC149"
+                        });
+                    }
+                </script>
+            </div>
+            <div th:if="${error}">
+                <button hidden id="btnError" th:onclick="alertError([[${error}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnError = document.getElementById("btnError");
+                        btnError.click();
+                    }
+                    alertError = (content) => {
+                        Swal.fire({
+                            title: "Thêm dữ liệu thất bại",
+                            text: content,
+                            icon: "error",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                </script>
+            </div>
+            <div class="card-body card-block">
+                <form id="productAdd" th:object="${product}" class="form-horizontal">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label class="font-weight-bold form-control-label">Tên sản phẩm
+                            </label>
+                            <div class="" style="color: red" id="errorName"></div>
+                        </div>
+                        <input type="text" id="name" name="name"
+                               class="form-control" oninput="onInputText('errorName')">
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label class="font-weight-bold form-control-label">Mô tả
+                            </label>
+                            <div class="" style="color: red" id="errorDescription"></div>
+                        </div>
+                        <input type="text" id="description" name="description"
+                               class="form-control" oninput="onInputText('errorDescription')">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="font-weight-bold">Chất liệu</label>
+                        <div class="w-100 d-flex justify-content-between">
+                            <div class="w-95">
+                                <select class="form-control" th:field="*{material}">
+                                    <option th:value="${material.id}" th:each="material: ${listMaterial}"
+                                            th:text="${material.name}"></option>
+                                </select>
+                            </div>
+                            <div class="w-5 d-flex justify-content-end">
+                                <button type="button" class="btn btn-dark" data-toggle="modal"
+                                        data-target="#exampleModalMaterial">
+                                    <i class="fa-solid fa-square-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="font-weight-bold">Loại sản phẩm</label>
+                        <div class="w-100 d-flex justify-content-between">
+                            <div class="w-95">
+                                <select class="form-control" th:field="*{category}">
+                                    <option th:value="${category.id}" th:each="category: ${listCategory}"
+                                            th:text="${category.name}"></option>
+                                </select>
+                            </div>
+                            <div class="w-5 d-flex justify-content-end">
+                                <button type="button" class="btn btn-dark" data-toggle="modal"
+                                        data-target="#exampleModalCategory">
+                                    <i class="fa-solid fa-square-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="font-weight-bold">Thương hiệu</label>
+                        <div class="w-100 d-flex justify-content-between">
+                            <div class="w-95">
+                                <select class="form-control" th:field="*{brand}">
+                                    <option th:value="${brand.id}" th:each="brand: ${listBrand}"
+                                            th:text="${brand.name}"></option>
+                                </select>
+                            </div>
+                            <div class="w-5 d-flex justify-content-end">
+                                <button type="button" class="btn btn-dark" data-toggle="modal"
+                                        data-target="#exampleModalBrand">
+                                    <i class="fa-solid fa-square-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="font-weight-bold">Kiểu dáng</label>
+                        <div class="w-100 d-flex justify-content-between">
+                            <div class="w-95">
+                                <select class="form-control" th:field="*{form}">
+                                    <option th:value="${form.id}" th:each="form: ${listForm}"
+                                            th:text="${form.name}"></option>
+                                </select>
+                            </div>
+                            <div class="w-5 d-flex justify-content-end">
+                                <button type="button" class="btn btn-dark" data-toggle="modal"
+                                        data-target="#exampleModalForm">
+                                    <i class="fa-solid fa-square-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <div>
+                            <a href="/tiger/product/page">
+                                <button type="button" class="btn btn-warning">
+                                    <i class="fa-solid fa-circle-left px-4"></i>
+                                </button>
+                            </a>
+                        </div>
+                        <div>
+                            <button onclick="clickNextAddProduct('product', 'productAdd')" type="button"
+                                    class="btn btn-dark">
+                                <i class="fa-solid fa-circle-right px-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <script th:inline="javascript">
+
+                        const inputName = document.getElementById('name');
+                        const inputDescription = document.getElementById('description');
+
+                        inputName.addEventListener('input', function (event) {
+                            const specialCharacters = /[!@#$%^*?:{}|<>+=~`\\/\[\]]/g;
+                            const inputValue = event.target.value;
+                            if (specialCharacters.test(inputValue)) {
+                                event.target.value = inputValue.replace(specialCharacters, '');
+                            }
+                        });
+
+                        inputDescription.addEventListener('input', function (event) {
+                            const specialCharacters = /[!@#$%^*?:{}|<>+=~`\\/\[\]]/g;
+                            const inputValue = event.target.value;
+                            if (specialCharacters.test(inputValue)) {
+                                event.target.value = inputValue.replace(specialCharacters, '');
+                            }
+                        });
+
+                        checkProductName = () => {
+                            let isName = document.getElementById('name').value
+                            isName = isName.replace(/\s{2,}/g, '').trimStart()
+                            if (isName.trim() === '') {
+                                document.getElementById('errorName').innerHTML = `Chưa nhập tên sản phẩm`
+                                return false;
+                            }
+                            if (isName.length < 2) {
+                                document.getElementById('errorName').innerHTML = `Tên sản phẩm tối thiểu 2 kí tự`
+                                return false;
+                            }
+                            if (isName.length > 200) {
+                                document.getElementById('errorName').innerHTML = `Tên sản phẩm tối đa 200 kí tự`
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        checkDescription = () => {
+                            let isDescription = document.getElementById('description').value
+                            isDescription = isDescription.replace(/\s{2,}/g, '').trimStart()
+                            if (isDescription.trim() === '') {
+                                document.getElementById('errorDescription').innerHTML = `Chưa nhập mô tả`
+                                return false;
+                            }
+                            return true;
+                        }
+
+
+                        validate = () => {
+                            let isName = checkProductName();
+                            let isDescription = checkDescription();
+                            if (isName === true && isDescription === true) {
+                                return true;
+                            }
+                        }
+
+                        checkName = (attributeName, errorAttributeName, title) => {
+                            let isName = document.getElementById(attributeName).value
+                            if (isName.trim() === '') {
+                                document.getElementById(errorAttributeName).innerHTML = `Chưa nhập ${title}`
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        clickAttribute = (entity, idForm, attributeName, errorAttributeName, title) => {
+                            if (checkName(attributeName, errorAttributeName, title)) {
+                                Swal.fire({
+                                    title: "Thêm dữ liệu",
+                                    text: "Bạn có muốn thêm dữ liệu không ?",
+                                    icon: "question",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#0DC149",
+                                    cancelButtonColor: "#d33",
+                                    confirmButtonText: "Có",
+                                    cancelButtonText: "Không",
+                                    allowOutsideClick: false
+                                }).then((add) => {
+                                    if (add.isConfirmed) {
+                                        document.getElementById(idForm).action = '/tiger/' + entity + '/attribute'
+                                        document.getElementById(idForm).method = 'post'
+                                        document.getElementById(idForm).submit()
+                                    }
+                                });
+                            }
+                        }
+
+                        clickNextAddProduct = (entity, idForm) => {
+                            if (validate()) {
+                                document.getElementById(idForm).action = '/tiger/product/next-add'
+                                document.getElementById(idForm).method = 'post'
+                                document.getElementById(idForm).submit()
+                            }
+                        }
+                    </script>
+                </form>
+
+                <!--Material Add Start-->
+                <form id="materialForm">
+                    <div class="modal fade" id="exampleModalMaterial" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabelMaterial">Thêm dữ liệu</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="font-weight-bold form-control-label">Tên chất
+                                                liệu</label>
+                                            <div class="" style="color: red" id="errorMaterialName"></div>
+                                        </div>
+                                        <input type="text" id="materialName" name="materialName"
+                                               class="form-control" oninput="onInputText('errorMaterialName')">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button onclick="clickAttribute('material', 'materialForm', 'materialName', 'errorMaterialName', 'tên chất liệu')"
+                                            type="button" class="btn btn-dark"><i
+                                            class="fa-solid fa-square-plus px-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--Material Add Start-->
+
+                <!--Category Add Start-->
+                <form id="categoryForm">
+                    <div class="modal fade" id="exampleModalCategory" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabelCategory">Thêm dữ liệu</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="font-weight-bold form-control-label">Tên loại sản phẩm</label>
+                                            <div class="" style="color: red" id="errorCategoryName"></div>
+                                        </div>
+                                        <input type="text" id="categoryName" name="categoryName"
+                                               class="form-control" oninput="onInputText('errorCategoryName')">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button onclick="clickAttribute('category', 'categoryForm', 'categoryName', 'errorCategoryName', 'tên loại sản phẩm')"
+                                            type="button" class="btn btn-dark"><i
+                                            class="fa-solid fa-square-plus px-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--Category Add Start-->
+
+                <!--Brand Add Start-->
+                <form id="brandForm">
+                    <div class="modal fade" id="exampleModalBrand" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabelBrand">Thêm dữ liệu</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="font-weight-bold form-control-label">Tên thương hiệu</label>
+                                            <div class="" style="color: red" id="errorBrandName"></div>
+                                        </div>
+                                        <input type="text" id="brandName" name="brandName"
+                                               class="form-control" oninput="onInputText('errorBrandName')">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button onclick="clickAttribute('brand', 'brandForm', 'brandName', 'errorBrandName', 'tên thương hiệu')"
+                                            type="button" class="btn btn-dark"><i
+                                            class="fa-solid fa-square-plus px-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--Brand Add Start-->
+
+                <!--Form Add Start-->
+                <form id="formForm">
+                    <div class="modal fade" id="exampleModalForm" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabelForm">Thêm dữ liệu</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="font-weight-bold form-control-label">Tên kiểu dáng</label>
+                                            <div class="" style="color: red" id="errorFormName"></div>
+                                        </div>
+                                        <input type="text" id="formName" name="formName"
+                                               class="form-control" oninput="onInputText('errorFormName')">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button onclick="clickAttribute('form', 'formForm', 'formName', 'errorFormName', 'tên kiểu dáng')"
+                                            type="button" class="btn btn-dark"><i
+                                            class="fa-solid fa-square-plus px-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--                Form Add Start-->
+            </div>
+            <script th:inline="javascript">
+                const inputElementFormName = document.getElementById('formName');
+                const inputElementBrandName = document.getElementById('brandName');
+                const inputElementMaterialName = document.getElementById('materialName');
+                const inputElementCategoryName = document.getElementById('categoryName');
+
+                inputElementFormName.addEventListener('input', function(event) {
+                    debugger
+                    const specialCharacters = /[!@#$%^&*()_,.?":{}|'<>+\-=~`\\/\[\]]/g;
+                    const inputValue = event.target.value;
+                    if (specialCharacters.test(inputValue)) {
+                        event.target.value = inputValue.replace(specialCharacters, '');
+                    }
+                });
+
+                inputElementBrandName.addEventListener('input', function(event) {
+                    debugger
+                    const specialCharacters = /[!@#$%^&*()_,.?":{}|'<>+\-=~`\\/\[\]]/g;
+                    const inputValue = event.target.value;
+                    if (specialCharacters.test(inputValue)) {
+                        event.target.value = inputValue.replace(specialCharacters, '');
+                    }
+                });
+
+                inputElementMaterialName.addEventListener('input', function(event) {
+                    debugger
+                    const specialCharacters = /[!@#$%^&*()_,.?":{}|'<>+\-=~`\\/\[\]]/g;
+                    const inputValue = event.target.value;
+                    if (specialCharacters.test(inputValue)) {
+                        event.target.value = inputValue.replace(specialCharacters, '');
+                    }
+                });
+
+                inputElementCategoryName.addEventListener('input', function(event) {
+                    debugger
+                    const specialCharacters = /[!@#$%^&*()_,.?":{}|'<>+\-=~`\\/\[\]]/g;
+                    const inputValue = event.target.value;
+                    if (specialCharacters.test(inputValue)) {
+                        event.target.value = inputValue.replace(specialCharacters, '');
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+</html>

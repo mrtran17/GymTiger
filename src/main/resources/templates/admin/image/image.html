@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <strong>ẢNH</strong>
+            </div>
+            <div th:if="${mess}" class="alert alert-success alert-dismissible fade show" role="alert"
+                 style="margin: 5px">
+                <span th:text="${mess}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+
+            <div class="card-body card-block">
+                <form id="imageForm" th:object="${product}" class="form-horizontal" enctype="multipart/form-data">
+                    <div class="card-footer d-flex justify-content-between">
+                        <div>
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModal">
+                                <i class="fa-solid fa-square-plus px-4"></i>
+                            </button>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Thêm dữ liệu</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <input type="hidden" class="form-control" name="productId" th:value="*{id}">
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="font-weight-bold form-control-label">File ảnh</div>
+                                                    <div class="" style="color: red" id="errorName"></div>
+                                                </div>
+
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="importFileProduct"
+                                                           name="images"
+                                                           multiple oninput="onInputText('errorName')"
+                                                           accept="image/png, image/jpg, image/jpeg">
+                                                    <label class="custom-file-label" for="importFileProduct">Chọn ảnh</label>
+                                                </div>
+                                                <div class="row mb-2 ml-1" id="preview-image-files"></div>
+                                            </div>
+                                            <script th:inline="javascript">
+                                                document.querySelector("#importFileProduct").addEventListener("change", function (event) {
+                                                    uploadFile(event, "importFileProduct");
+                                                });
+                                            </script>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button onclick="addImage()" type="button" class="btn btn-dark"><i
+                                                    class="fa-solid fa-square-plus px-4"></i>
+                                            </button>
+                                            <script th:inline="javascript">
+                                                addImage = () => {
+                                                    if (validateFile('importFileProduct', 'errorName')) {
+                                                        swal({
+                                                            title: "Thêm dữ liệu",
+                                                            text: "Bạn có muốn thêm dữ liệu không ?",
+                                                            icon: "warning",
+                                                            buttons: ["Không", "Có"],
+                                                            dangerMode: true,
+                                                            closeOnClickOutside: false,
+                                                        }).then((add) => {
+                                                            if (add) {
+                                                                document.getElementById('imageForm').action = '/tiger/image/add'
+                                                                document.getElementById('imageForm').method = 'post'
+                                                                document.getElementById('imageForm').submit()
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/tiger/product/page">
+                                <button type="button" class="btn btn-warning"><i
+                                        class="fa-solid fa-circle-left px-4"></i>
+                                </button>
+                            </a>
+                        </div>
+<!--                        <div>-->
+<!--                            <a th:href="@{'/tiger/product/' + ${productId} + '/image/view-restore'}">-->
+<!--                                <button type="button" class="btn btn-dark">-->
+<!--                                    <i class="fa-solid fa-warehouse px-4"></i>-->
+<!--                                </button>-->
+<!--                            </a>-->
+<!--                        </div>-->
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    </h1>
+    <div class="col">
+        <div class="card">
+            <div class="card-header" th:if="${pageImage.isEmpty()}">
+                <strong class="card-title">KHÔNG CÓ DỮ LIỆU</strong>
+            </div>
+            <div th:if="${not pageImage.isEmpty()}">
+                <div class="card-header">
+                    <strong>CÓ</strong>
+                    <strong class="card-title" th:text="${pageImage.getTotalElements()}"></strong>
+                    <strong class="card-title"> BẢN GHI</strong>
+                </div>
+                <div class="card-body">
+                    <form id="imageDelete">
+                        <table class="table text-center">
+                            <thead class="thead-dark">
+                            <tr>
+<!--                                <th scope="col">Mã ảnh</th>-->
+                                <th scope="col">Ảnh</th>
+                                <th scope="col">Chức năng</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="items:${pageImage}">
+<!--                                <td th:text="${items.id}"></td>-->
+                                <td>
+                                    <img th:src="@{'/image/' + ${items.id}}" alt=""
+                                         style="width: 100px;height: 100px">
+                                </td>
+                                <td class="d-flex justify-content-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-dark" type="button"
+                                                id="dropdownMenuButton" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item"
+                                               th:href="@{'/tiger/image/detail/' + ${items.id}}">
+                                                <i class="fa-solid fa-pen mr-3"></i>Sửa</a>
+                                            <button
+                                                    th:onclick="clickDelete('image', 'imageDelete', [[${items.id}]])"
+                                                    type="button" class="dropdown-item"><i
+                                                    class="fa-solid fa-trash mr-3"></i>Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+
+                    <!--            Pagination-->
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div th:if="${pageImage.getNumber() + 1 > 1}" class="btn btn-dark mr-1">
+                            <a th:href="@{|?page=0|}">
+                                </i><i style="color: white" class="fa-solid fa-backward-fast"></i></a>
+                        </div>
+                        <div th:if="${pageImage.getNumber() + 1 > 1}" class="btn btn-dark mr-1">
+                            <a th:href="@{|?page=${pageImage.getNumber() - 1}|}">
+                                <i style="color: white" class="fa-solid fa-left-long"></i></a>
+                        </div>
+                        <div class="btn btn-dark d-flex">
+                            <div th:text="${pageImage.getNumber() + 1}"></div>
+                            <span>/</span>
+                            <div th:text="${pageImage.getTotalPages()}"></div>
+                        </div>
+                        <div th:if="${pageImage.getNumber() + 1 lt pageImage.getTotalPages()}"
+                             class="btn btn-dark ml-1">
+                            <a th:href="@{|?page=${pageImage.getNumber()+1}|}">
+                                <i style="color: white" class="fa-solid fa-left-long fa-rotate-180"></i></a>
+                        </div>
+                        <div th:if="${pageImage.getNumber() + 1 lt pageImage.getTotalPages()}"
+                             class="btn btn-dark ml-1">
+                            <a th:href="@{|?page=${pageImage.getTotalPages()-1}|}">
+                                <i style="color: white" class="fa-solid fa-forward-fast"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

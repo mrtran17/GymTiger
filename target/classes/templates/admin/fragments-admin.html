@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="page_head(title)">
+    <meta charset="UTF-8">
+    <title>GymTiger Store</title>
+    <!-- Favicon -->
+    <link th:href="@{/admin/images/tiger.png}" rel="icon">
+
+    <!--    <link rel="shortcut icon" th:href="@{/admin/images/favicon.ico}">-->
+
+    <link rel="stylesheet" th:href="@{/admin/vendors/bootstrap/dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/admin/vendors/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/admin/vendors/themify-icons/css/themify-icons.css}">
+    <link rel="stylesheet" th:href="@{/admin/vendors/flag-icon-css/css/flag-icon.min.css}">
+    <link rel="stylesheet" th:href="@{/admin/vendors/selectFX/css/cs-skin-elastic.css}">
+    <link rel="stylesheet" th:href="@{/admin/vendors/jqvmap/dist/jqvmap.min.css}">
+
+    <!--    css-->
+    <link rel="stylesheet" th:href="@{/admin/assets/css/offline-cart.css}">
+    <link rel="stylesheet" th:href="@{/admin/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/admin/assets/css/index.css}">
+
+    <!--    fontawesome-->
+    <script th:src="@{https://kit.fontawesome.com/1943ac9f5b.js}" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css" />
+
+<!--    <script th:inline="javascript" th:src="@{/admin/assets/js/jspdf.umd.min.js}"></script>-->
+    <script th:inline="javascript" th:src="@{/admin/assets/js/html5-qrcode.min.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/jquery/dist/jquery.min.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/assets/js/main.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/chart.js/dist/Chart.bundle.min.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/assets/js/dashboard.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/assets/js/widgets.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/jqvmap/dist/jquery.vmap.min.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js}"></script>
+    <script th:inline="javascript" th:src="@{/admin/vendors/jqvmap/dist/maps/jquery.vmap.world.js}"></script>
+    <script th:inline="javascript" th:src="@{https://unpkg.com/sweetalert/dist/sweetalert.min.js}"></script>
+    <script th:inline="javascript">
+        /* Bạn có thể giữ nguyên đoạn mã JavaScript này */
+        (function ($) {
+            "use strict";
+
+            jQuery('#vmap').vectorMap({
+                map: 'world_en',
+                backgroundColor: null,
+                color: '#ffffff',
+                hoverOpacity: 0.7,
+                selectedColor: '#1de9b6',
+                enableZoom: true,
+                showTooltip: true,
+                values: sample_data,
+                scaleColors: ['#1de9b6', '#03a9f5'],
+                normalizeFunction: 'polynomial'
+            });
+        })(jQuery);
+
+        function setFileName() {
+            var fileName = document.getElementById("importFile").value.split("\\").pop();
+            document.querySelector(".custom-file-label").textContent = fileName;
+            // alert('ádâdâdâdâd')
+        }
+
+        function uploadFile(e, fileId) {
+            let fileName = document.getElementById(fileId).value.split("\\").pop();
+            document.querySelector(".custom-file-label").textContent = fileName;
+            const files = e.target.files
+            const previewImagesContainer = document.getElementById('preview-image-files');
+            previewImagesContainer.innerHTML = ''
+            const imageUrls = Array.from(files).map(function (file) {
+                return URL.createObjectURL(file);
+            });
+
+            loadImages(imageUrls, previewImagesContainer);
+        }
+
+        function loadImages(imageUrls, previewImagesContainer) {
+            for (let i = 0; i < imageUrls.length; i++) {
+                const imageUrl = imageUrls[i];
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.classList.add('img-fluid');
+                img.style.width = '100px';
+                img.style.height = '100px';
+                previewImagesContainer.appendChild(img);
+            }
+        }
+
+        onInputText = (idError) => {
+            document.getElementById(idError).innerHTML = ''
+        }
+
+        checkName = (idInput, errorName, text) => {
+            let isName = document.getElementById(idInput).value
+            isName = isName.replace(/\s{2,}/g, '').trimStart()
+            if (isName.trim() === '') {
+                document.getElementById(errorName).innerHTML = `Chưa nhập ${text}`
+                return false;
+            }
+            if (isName.length < 2) {
+                document.getElementById(errorName).innerHTML = `${text} tối thiểu 2 kí tự`
+                return false;
+            }
+            if (isName.length > 50) {
+                document.getElementById(errorName).innerHTML = `${text} tối đa 50 kí tự`
+                return false;
+            }
+            return true;
+        }
+
+        function clickAdd(entity, idForm, idName, errorName, textName) {
+            if (checkName(idName, errorName, textName)) {
+                Swal.fire({
+                    title: "Thêm dữ liệu",
+                    text: "Bạn có muốn thêm dữ liệu không ?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#0DC149",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Có",
+                    cancelButtonText: "Không",
+                    allowOutsideClick: false
+                }).then((add) => {
+                    if (add.isConfirmed) {
+                        document.getElementById(idForm).action = '/tiger/' + entity + '/add'
+                        document.getElementById(idForm).method = 'post'
+                        document.getElementById(idForm).submit()
+                    }
+                });
+            }
+        }
+
+        function validateFile(idInputFile, errorName) {
+            let fileInput = document.getElementById(idInputFile);
+            let file = fileInput.files;
+            if (file.length === 0) {
+                document.getElementById(errorName).innerHTML = `Vui lòng chọn ảnh`
+                return false;
+            }
+            for (let i = 0; i < file.length; i++) {
+                if (file[i].size > 1024 * 1024) {
+                    document.getElementById(errorName).innerHTML = `Kích thước từng ảnh không vượt quá 1MB`
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function clickUpdate(idForm, idName, errorName, textName) {
+            if (checkName(idName, errorName, textName)) {
+                Swal.fire({
+                    title: "Sửa dữ liệu",
+                    text: "Bạn có muốn sửa dữ liệu không ?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#0DC149",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Có",
+                    cancelButtonText: "Không",
+                    allowOutsideClick: false
+                }).then((update) => {
+                    if (update.isConfirmed) {
+                        document.getElementById(idForm).submit()
+                    }
+                });
+            }
+        }
+
+        function clickDelete(entity, idForm, idDelete) {
+            Swal.fire({
+                title: "Xóa dữ liệu",
+                text: "Bạn có muốn xóa dữ liệu không ?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#0DC149",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Có",
+                cancelButtonText: "Không",
+                allowOutsideClick: false
+            }).then((deleted) => {
+                if (deleted.isConfirmed) {
+                    document.getElementById(idForm).action = '/tiger/' + entity + "/delete/" + idDelete
+                    document.getElementById(idForm).method = 'post'
+                    document.getElementById(idForm).submit()
+                }
+            });
+        }
+
+        clickRestore = (entity, idForm, idRestore) => {
+            Swal.fire({
+                title: "Khôi phục dữ liệu",
+                text: "Bạn có muốn khôi phục dữ liệu không ?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#0DC149",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Có",
+                cancelButtonText: "Không",
+                allowOutsideClick: false
+            }).then((restore) => {
+                if (restore.isConfirmed) {
+                    document.getElementById(idForm).action = '/tiger/' + entity + "/restore/" + idRestore
+                    document.getElementById(idForm).method = 'post'
+                    document.getElementById(idForm).submit()
+                }
+            });
+        }
+
+        function importExcel(idForm, name, error, entity) {
+            if (validateFile(name, error)) {
+                Swal.fire({
+                    title: "Thêm dữ liệu Excel",
+                    text: "Bạn có muốn thêm dữ liệu excel không ?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#0DC149",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Có",
+                    cancelButtonText: "Không",
+                    allowOutsideClick: false
+                }).then((excel) => {
+                    if (excel.isConfirmed) {
+                        document.getElementById(idForm).action = '/tiger/' + entity + '/excel'
+                        document.getElementById(idForm).method = 'post'
+                        document.getElementById(idForm).submit()
+                    }
+                });
+            }
+        }
+
+        function clickSearch(entity, id) {
+            document.getElementById(id).action = '/tiger/' + entity + '/search'
+            document.getElementById(id).method = 'get'
+            document.getElementById(id).submit()
+        }
+
+        function clickSearchRestore(entity, id) {
+            document.getElementById(id).action = '/tiger/' + entity + '/search-restore'
+            document.getElementById(id).method = 'get'
+            document.getElementById(id).submit()
+        }
+
+        downLoadTemplate = (idForm, entity) => {
+            document.getElementById(idForm).action = '/template/' + entity
+            document.getElementById(idForm).method = 'get'
+            document.getElementById(idForm).submit()
+        }
+    </script>
+
+    <link th:href='@{https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800}' rel='stylesheet'
+          type='text/css'>
+</head>
+<body>
+
+</body>
+</html>

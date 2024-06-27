@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Bill</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div th:if="${mess}">
+                    <button hidden id="btnSuccess" th:onclick="alertSuccess([[${mess}]])">Click Me</button>
+                    <script th:inline="javascript">
+                        window.onload = function () {
+                            var btnSuccess = document.getElementById("btnSuccess");
+                            btnSuccess.click();
+                        }
+                        alertSuccess = (content) => {
+                            Swal.fire({
+                                title: content,
+                                icon: "success",
+                                confirmButtonColor: "#0DC149"
+                            });
+                        }
+                    </script>
+                </div>
+                <div th:if="${error}">
+                    <button hidden id="btnError" th:onclick="alertError([[${error}]])">Click Me</button>
+                    <script th:inline="javascript">
+                        window.onload = function () {
+                            var btnError = document.getElementById("btnError");
+                            btnError.click();
+                        }
+                        alertError = (content) => {
+                            Swal.fire({
+                                title: "Lỗi",
+                                text: content,
+                                icon: "error",
+                                confirmButtonColor: "#d33"
+                            });
+                        }
+                    </script>
+                </div>
+                <div class="card" style="position: relative">
+                    <div class="card-body">
+                        <div class="invoice-title">
+                            <!--                            <h4 class="float-end font-size-15"><span class="badge bg-success font-size-12 ms-2" th:text="${billdetail.trangThaiDonHang}"></span></h4>-->
+                            <div class="float-end mr-4">
+                                <!-- Add class 'active' to progress -->
+                                <div class="track">
+                                    <div class="step" th:classappend="${
+                                    bill.status == 10 ||
+                                    bill.status == 3 ||
+                                    bill.status == 2 ||
+                                    bill.status == 1  ? 'active' : ''}
+                                    ">
+                                            <span class="icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     viewBox="0 0 256 256">
+                                                    <path fill="currentColor"
+                                                          d="M232 136.66A104.12 104.12 0 1 1 119.34 24a8 8 0 0 1 1.32 16A88.12 88.12 0 1 0 216 135.34a8 8 0 0 1 16 1.32ZM120 72v56a8 8 0 0 0 8 8h56a8 8 0 0 0 0-16h-48V72a8 8 0 0 0-16 0Zm40-24a12 12 0 1 0-12-12a12 12 0 0 0 12 12Zm36 24a12 12 0 1 0-12-12a12 12 0 0 0 12 12Zm24 36a12 12 0 1 0-12-12a12 12 0 0 0 12 12Z"/>
+                                                </svg>
+                                            </span>
+                                        <span class="text">Chờ xác nhận</span>
+                                        <p th:if="${bill.orderDate != null}"
+                                           th:text="${#dates.format(bill.orderDate, 'dd-MM-yyyy HH:mm:ss')}"></p>
+                                    </div>
+                                    <div class="step" th:classappend="${
+
+                                    bill.status == 3 ||
+                                    bill.status == 2 ||
+                                    bill.status == 1 ? 'active' : ''}
+                                    ">
+                                            <span class="icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     viewBox="0 0 24 24">
+                                                    <g fill="none" stroke-width="1.5">
+                                                        <path fill="currentColor"
+                                                              d="m2.695 7.185l9 4l.61-1.37l-9-4l-.61 1.37ZM12.75 21.5v-11h-1.5v11h1.5Zm-.445-10.315l9-4l-.61-1.37l-9 4l.61 1.37Z"/>
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                              stroke-linejoin="round"
+                                                              d="M3 17.11V6.89a.6.6 0 0 1 .356-.548l8.4-3.734a.6.6 0 0 1 .488 0l8.4 3.734A.6.6 0 0 1 21 6.89v10.22a.6.6 0 0 1-.356.548l-8.4 3.734a.6.6 0 0 1-.488 0l-8.4-3.734A.6.6 0 0 1 3 17.11Z"/>
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                              stroke-linejoin="round"
+                                                              d="m7.5 4.5l8.644 3.842a.6.6 0 0 1 .356.548v3.61"/>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                        <span class="text"> Chờ giao hàng</span>
+                                        <p th:if="${bill.confirmationDate != null}"
+                                           th:text="${#dates.format(bill.confirmationDate, 'dd-MM-yyyy HH:mm:ss')}"></p>
+                                    </div>
+                                    <div class="step" th:classappend="${
+                                    bill.status == 2 ||
+                                    bill.status == 1  ? 'active' : ''}
+                                    ">
+                                        <span class="icon"> <i class="fa fa-truck"></i> </span>
+                                        <span class="text"> Đang giao hàng </span>
+                                        <p th:if="${bill.shippingDate != null}"
+                                           th:text="${#dates.format(bill.shippingDate, 'dd-MM-yyyy HH:mm:ss')}"></p>
+                                    </div>
+                                    <div class="step" th:classappend="${
+
+                                    bill.status == 1  ? 'active' : ''}
+                                    ">
+                                            <span class="icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                     viewBox="0 0 24 24">
+                                                    <path fill="currentColor"
+                                                          d="M19 13c.7 0 1.37.13 2 .35V12l-1-5H4l-1 5v2h1v6h9.09c-.05-.33-.09-.66-.09-1c0-1.23.37-2.36 1-3.31V14h1.69c.95-.63 2.08-1 3.31-1m-7 5H6v-4h6v4m-6.96-6l.6-3h12.72l.6 3H5.04M20 6H4V4h16v2m2.5 11.25L17.75 22L15 19l1.16-1.16l1.59 1.59l3.59-3.59l1.16 1.41"/>
+                                                </svg>
+                                            </span>
+                                        <span class="text">Đã hoàn thành</span>
+                                        <p th:if="${bill.completionDate != null}"
+                                           th:text="${#dates.format(bill.completionDate, 'dd-MM-yyyy HH:mm:ss')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4" style="padding-top: 20px">
+                                <h2 class="mb-1 text-muted" th:text="'Mã hoá đơn: ' + ${bill.code}">
+                                </h2>
+                                <div th:if="${bill.status == 0}" th:text="'ĐÃ HUỶ - NGÀY HUỶ: ' + ${#dates.format(bill.cancellationDate, 'dd-MM-yyyy HH:mm:ss')}" class="text-danger font-weight-bold border rounded p-2 border-danger">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4"/>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="text-muted">
+                                    <h5 class="font-size-16 mb-3">Thông tin đơn hàng</h5>
+                                    <h6 class="font-size-15 mb-2" th:if="${bill.customer != null}"
+                                        th:text="'Khách hàng: ' + ${bill.customer.email}">
+                                    </h6>
+                                    <h6 class="font-size-15 mb-2 font-italic"
+                                        th:text="'Tên người nhận: ' + ${bill.customerName}">
+                                    </h6>
+                                    <p class="mb-1"
+                                       th:text="'Địa chỉ nhận: ' + ${bill.address}">
+                                    </p>
+                                    <p th:if="${bill.phoneNumber != null}"
+                                       th:text="'SĐT: ' + ${bill.phoneNumber}">
+                                    </p>
+                                    <button type="button" class="btn btn-primary change-address-btn" data-toggle="modal" data-target="#confirmModal" th:data-id="${bill.id}"
+                                        th:if="${bill.status == 10}">Đổi địa chỉ nhận hàng</button>
+                                    <h6 class="font-size-15 mb-2" th:if="${bill.employee != null}"
+                                        th:text="'Nhân viên tương tác: ' + ${bill.employee.email}">
+                                    </h6>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-sm-6">
+                                <div class="text-muted" style="text-align: right">
+                                    <div>
+                                        <h5 class="font-size-15 mb-1">Ngày mua hàng:</h5>
+                                        <p
+                                                th:text="${#dates.format(bill.orderDate, 'dd-MM-yyyy HH:mm:ss')}">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-muted" style="text-align: right" th:if="${bill.paymentDate != null}">
+                                    <div>
+                                        <h5 class="font-size-15 mb-1">Ngày thanh toán:</h5>
+                                        <p
+                                                th:text="${#dates.format(bill.paymentDate, 'dd-MM-yyyy HH:mm:ss')}">
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <!-- end row -->
+                        <div class="py-2 mb-4">
+                            <div>
+                                <h5>Voucher:
+                                    <h5 style="color: rgb(21, 219, 153)" th:if="${bill.voucher != null}"
+                                        th:text="${bill.voucher.code}">
+                                    </h5>
+                                    <h5 style="color: rgb(21, 219, 153)" th:if="${bill.voucher == null}">
+                                        Không có
+                                    </h5>
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div>
+                                <h5>Loại đơn:
+                                    <h5 style="color: rgb(21, 219, 153)" th:if="${bill.type == 1}">Tại quầy</h5>
+                                    <h5 style="color: rgb(21, 219, 153)" th:if="${bill.type == 0}">Mua Online</h5>
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="py-2">
+                            <h5 class="font-size-15">Thanh toán</h5>
+
+                            <div class="table-responsive">
+                                <table class="table align-middle table-nowrap table-centered mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th>Thanh toán</th>
+                                        <th>Số tiền thanh toán</th>
+                                        <th>Trạng thái thanh toán</th>
+                                    </tr>
+                                    </thead>
+                                    <!-- end thead -->
+                                    <tbody>
+                                    <tr th:each="paymentMethod : ${listPaymentMethod}">
+                                        <td>
+                                            <div>
+                                                <h6 class="text-truncate font-size-14 mb-1"
+                                                    th:text="${paymentMethod.name}">
+                                                </h6>
+                                            </div>
+                                        </td>
+                                        <td
+                                                th:text="'₫' + ${#numbers.formatDecimal(paymentMethod.money, 0, 'POINT', 0, 'COMMA')}">
+                                        </td>
+                                        <td>
+
+                    <span class="text-warning p-1 font-weight-bold"
+                          th:if="${paymentMethod.status == 10}">&nbsp;Chưa thanh toán
+                    </span>
+                                            <span class="text-success p-1 font-weight-bold"
+                                                  th:if="${paymentMethod.status == 1}">&nbsp;Đã thanh toán
+                    </span>
+
+                                            <span th:if="${paymentMethod.status == 0}" class="text-danger p-1 font-weight-bold">
+                        &nbsp; Đã hủy
+                    </span>
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <!-- end tbody -->
+                                </table>
+                                <!-- end table -->
+                            </div>
+                        </div>
+                        <div class="py-2">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="font-size-15">Danh sách đơn hàng</h5>
+                                </div>
+                                <div class="col-6" th:if="${bill.status == 10}">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#productModal" style="float: right">
+                                        Thêm sản phẩm
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Product Modal -->
+                            <div th:if="${bill.status == 10}" class="modal fade" id="productModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="productModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="productModalLabel">
+                                                <i class="fas fa-shopping-bag"></i> Danh sách sản phẩm
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+
+                                            <div class="form-row">
+                                                <div class="col-md-8 mb-3">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="searchInput"
+                                                               placeholder="Nhập mã, tên sản phẩm">
+                                                        <div class="input-group-append">
+                                                        <span class="input-group-text"><i
+                                                                class="fas fa-search"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table id="productTable" class="table">
+                                                <thead class="thead-dark">
+                                                <tr>
+                                                    <th class="form-control-label">Ảnh</th>
+                                                    <th class="form-control-label">Mã</th>
+                                                    <th class="form-control-label">Tên</th>
+                                                    <th class="form-control-label">Kích cỡ</th>
+                                                    <th class="form-control-label">Màu</th>
+                                                    <th class="form-control-label">Số lượng tồn</th>
+                                                    <th class="form-control-label">Giá</th>
+                                                    <th class="form-control-label"></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="pd : ${listProductDetail}" class="visible-row">
+                                                    <td style="padding: 10px;">
+                                                        <img th:src="@{'/image/product/' + ${pd.product.id}}"
+                                                             style="width: 50px; height: 50px; display: block; margin: 0 auto; border-radius: 8px">
+                                                    </td>
+                                                    <td th:text="${pd.code}"></td>
+                                                    <td th:text="${pd.product.name}"></td>
+                                                    <td th:text="${pd.size.name}"></td>
+                                                    <td th:text="${pd.color.name}"></td>
+                                                    <td th:text="${pd.quantity}"></td>
+                                                    <td th:text="${'₫' + #numbers.formatDecimal(pd.priceDiscount, 0, 'COMMA', 0, 'POINT')}"></td>
+                                                    <td>
+                                                        <button class="btn add-btn btn-primary" data-toggle="modal" data-target="#quantityModal" th:data-id="${pd.id}">+</button>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal -->
+                            <div th:if="${bill.status == 10}" class="modal fade" id="quantityModal" tabindex="-1" role="dialog" aria-labelledby="quantityModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <form th:action="@{/tiger/bill/add-bill-item}" method="post" id="quantityForm">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="quantityModalLabel">Nhập số lượng</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="billId" th:value="${bill.id}">
+                                                <input type="hidden" id="pdId" name="productDetailId">
+                                                <input type="text" id="productDetailQuantity" name="productDetailQuantity" class="form-control" value="1">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                                                <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table align-middle table-nowrap table-centered mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Mã</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Màu sắc</th>
+                                        <th>Kích cỡ</th>
+                                        <th>Giá tiền</th>
+                                        <th>Số lượng</th>
+                                        <th class="text-end" style="width: 120px">Thành tiền</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                    <!-- end thead -->
+                                    <tbody>
+                                    <tr th:each="billDetail : ${lstBillDetails}">
+                                        <td>
+                                            <img th:src="@{'/image/product/' + ${billDetail.productDetail.product.id}}"
+                                                 width="62" height="62">
+                                        </td>
+                                        <td th:text="${billDetail.productDetail.code}"></td>
+                                        <td>
+                                            <div>
+                                                <h6 class="text-truncate font-size-14 mb-1"
+                                                    th:text="${billDetail.productDetail.product.name}">
+                                                    Black Strap A012
+                                                </h6>
+                                            </div>
+                                        </td>
+                                        <td th:text="${billDetail.productDetail.color.name}"></td>
+                                        <td th:text="${billDetail.productDetail.size.name}"></td>
+                                        <td
+                                                th:text="'₫' + ${#numbers.formatDecimal(billDetail.price, 0, 'POINT', 0, 'COMMA')}">
+                                        </td>
+                                        <form th:action="@{/tiger/bill/update-bill-item}" method="post">
+                                            <input type="hidden" name="id" th:value="${billDetail.id}">
+                                            <td th:if="${bill.status == 10}">
+                                                <input type="text" class="form-control form-control-sm text-center" name="quantity" th:value="${billDetail.quantity}">
+                                                <div class="mt-2 text-center">
+                                                    Còn: <span th:text="${billDetail.productDetail.quantity}"></span>
+                                                </div>
+                                            </td>
+                                            <td th:if="${bill.status != 10}" th:text="${billDetail.quantity}">
+                                            </td>
+                                            <td class="text-end"
+                                                th:text="'₫' + ${#numbers.formatDecimal(billDetail.price * billDetail.quantity, 0, 'POINT', 0, 'COMMA')}">
+                                                $ 245.50
+                                            </td>
+                                            <td th:if="${bill.status == 10}">
+                                                <button class="btn btn-sm btn-primary"
+                                                        type="submit" name="action" value="update" title="Sửa"><i class="fa fa-pencil"></i></button>
+                                                <button class="btn btn-sm btn-primary"
+                                                        type="submit" name="action" value="delete" title="Xoá"><i class="fa fa-times"></i></button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                    <!-- end tr -->
+
+                                    <tr>
+                                        <th scope="row" colspan="8" style="text-align: right">
+                                            Tổng thanh toán sản phẩm :
+                                        </th>
+                                        <td style="text-align: right"
+                                            th:text="'₫' + ${#numbers.formatDecimal(bill.price, 0, 'POINT', 0, 'COMMA')}">
+                                            $732.50
+                                        </td>
+                                    </tr>
+                                    <!-- end tr -->
+                                    <tr>
+                                        <th scope="row" colspan="8" class="border-0" style="text-align: right">
+                                            Voucher giảm:
+                                        </th>
+                                        <td class="border-0" style="text-align: right"
+                                            th:text="'₫' + ${#numbers.formatDecimal(bill.discountAmount, 0, 'POINT', 0, 'COMMA')}">
+                                            - $25.50
+                                        </td>
+                                    </tr>
+                                    <!-- end tr -->
+                                    <tr>
+                                        <th scope="row" colspan="8" class="border-0" style="text-align: right">
+                                            Phí ship :
+                                        </th>
+                                        <td class="border-0" style="text-align: right"
+                                            th:text="'₫' + ${#numbers.formatDecimal(bill.shippingFee, 0, 'POINT', 0, 'COMMA')}">
+                                            0
+                                        </td>
+                                    </tr>
+                                    <!-- end tr -->
+
+                                    <!-- end tr -->
+                                    <tr>
+                                        <th scope="row" colspan="8" class="border-0" style="text-align: right">
+                                            Tổng thanh toán :
+                                        </th>
+                                        <td class="border-0" style="text-align: right">
+                                            <h4 class="m-0 fw-semibold"
+                                                th:text="'₫' + ${#numbers.formatDecimal(bill.totalPrice, 0, 'POINT', 0, 'COMMA')}">
+                                                $739.00
+                                            </h4>
+                                        </td>
+                                    </tr>
+                                    <!-- end tr -->
+                                    </tbody>
+                                    <!-- end tbody -->
+                                </table>
+                                <!-- end table -->
+                            </div>
+                            <!-- end table responsive -->
+                            <div class="d-print-none mt-4">
+                                <div style="text-align: right">
+<!--                                    <a th:href="@{'/tiger/bill/export-pdf/'+${bill.id}}"-->
+<!--                                       class="btn btn-success me-1"><i class="fa fa-print"></i></a>-->
+                                    <a th:href="@{'/tiger/bill'}">
+                                        <button type="button" class="btn btn-secondary w-md" data-dismiss="modal">
+                                            Đóng
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="py-2" th:if="${bill.status != 0 && bill.status != 1}">
+                                <a th:href="@{'/tiger/bill/detail-cancel-bill/' + ${bill.id}}" class="btn cancel-btn btn btn-danger rounded"
+                                        style="float: right; margin-bottom: 10px">
+                                    <i class="far fa-times-circle"></i>&nbsp;Hủy đơn
+                                </a>
+<!--                            <button class="btn btn-secondary confirm-btn text-wrap rounded" data-toggle="modal" data-target="#confirmModal" th:data-id="${bill.id}"-->
+<!--                               th:if="${bill.status == 10}">-->
+<!--                                <i class="far fa-check-square text-wrap"></i>&nbsp; Xác nhận đơn</button>-->
+                            <a th:href="@{'/tiger/bill/detail-confirm-bill/' + ${bill.id}}" class="btn btn-primary confirm-btn text-wrap rounded"
+                               th:if="${bill.status == 10}">
+                                <i class="far fa-check-square text-wrap"></i>&nbsp; Xác nhận đơn</a>
+                            <a th:href="@{'/tiger/bill/detail-shipping-bill/' + ${bill.id}}" class="btn btn-primary shipping-btn text-wrap rounded"
+                               th:if="${bill.status == 3}">
+                                            <i class="far fa-check-square text-wrap"></i>&nbsp; Xác nhận giao hàng</a>
+                            <a th:href="@{'/tiger/bill/detail-complete-bill/' + ${bill.id}}" class="btn btn-primary complete-btn text-wrap rounded"
+                               th:if="${bill.status == 2}">
+                                <i class="far fa-check-square text-wrap"></i>&nbsp; Xác nhận giao thành công</a>
+                        </div>
+                        <!-- Modal -->
+                        <div th:if="${bill.status == 10}" class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmModalLabel">Đổi địa chỉ nhận</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="confirmForm" th:action="@{/tiger/bill/change-bill-address}" method="POST">
+                                        <div class="modal-body">
+                                            <input type="hidden" id="orderId" name="id">
+                                            <div class="form-group">
+                                                <label for="customerName">Tên người nhận</label>
+                                                <input type="text" class="form-control" th:value="${bill.customerName}" id="customerName" name="customerName">
+                                                <span id="customerNameError" class="small text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="phoneNumber">SĐT</label>
+                                                <input type="text" class="form-control" th:value="${bill.phoneNumber}" id="phoneNumber" name="phoneNumber">
+                                                <span id="phoneNumberError" class="small text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="specific-address">Số nhà, đường</label>
+                                                <input type="text" class="form-control" id="specific-address" name="specificAddress">
+                                                <span id="specificAddressError" class="small text-danger"></span>
+                                            </div>
+                                            <div class="row no-gutters">
+                                                <div class="col-sm-4 pr-sm-2">
+                                                    <div class="form-group">
+                                                        <label for="city" class="small text-muted mb-1">TỈNH THÀNH</label>
+                                                        <select class="form-control form-control-sm" name="city" id="city">
+                                                            <option value="" selected>Tỉnh thành</option>
+                                                        </select>
+                                                        <span id="cityError" class="small text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 pr-sm-2">
+                                                    <div class="form-group">
+                                                        <label for="district" class="small text-muted mb-1">QUẬN HUYỆN</label>
+                                                        <select class="form-control form-control-sm" name="district" id="district">
+                                                            <option value="" selected>Quận huyện</option>
+                                                        </select>
+                                                        <span id="districtError" class="small text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="ward" class="small text-muted mb-1">PHƯỜNG XÃ</label>
+                                                        <select class="form-control form-control-sm" name="ward" id="ward">
+                                                            <option value="" selected>Phường xã</option>
+                                                        </select>
+                                                        <span id="wardError" class="small text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+    </div>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js}"></script>
+    <script>
+        const host = "https://provinces.open-api.vn/api/";
+
+        // var defaultCity = document.getElementById('defaultCity').value;
+        // var defaultDistrict = document.getElementById('defaultDistrict').value;
+        // var defaultWard = document.getElementById('defaultWard').value;
+
+        var callAPI = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data, "city");
+                    // $("#city").val(defaultCity).change();
+                });
+        }
+        callAPI('https://provinces.open-api.vn/api/?depth=1');
+        var callApiDistrict = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data.districts, "district");
+                    // $("#district").val(defaultDistrict).change();
+                });
+        }
+        var callApiWard = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data.wards, "ward");
+                    // $("#ward").val(defaultWard);
+                });
+        }
+
+        var renderData = (array, select) => {
+            let row = ' <option disable value="">Chọn</option>';
+            array.forEach(element => {
+                row += `<option data-id="${element.code}" value="${element.name}">${element.name}</option>`
+            });
+            document.querySelector("#" + select).innerHTML = row
+        }
+
+        $("#city").change(() => {
+            callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+        });
+        $("#district").change(() => {
+            callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+        });
+    </script>
+    <script>
+        $('.cancel-btn').on('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Xác nhận?",
+                text: `Bạn chắc chắn muốn hủy đơn này?`,
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: 'Hủy',
+                confirmButtonText: 'Xác nhận',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = $(this).attr('href');
+                }
+            })
+        });
+
+        $('.confirm-btn').on('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Xác nhận?",
+                text: `Xác nhận đơn hàng này?`,
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: 'Hủy',
+                confirmButtonText: 'Xác nhận',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = $(this).attr('href');
+                }
+            })
+        });
+
+        $('.shipping-btn').on('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Xác nhận?",
+                text: `Xác nhận giao đơn này?`,
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: 'Hủy',
+                confirmButtonText: 'Xác nhận',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = $(this).attr('href');
+                }
+            })
+        });
+
+        $('.complete-btn').on('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Xác nhận?",
+                text: `Xác nhận đã giao thành công đơn này?`,
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: 'Hủy',
+                confirmButtonText: 'Xác nhận',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = $(this).attr('href');
+                }
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function(){
+            $('.change-address-btn').on('click', function(){
+                var orderId = $(this).attr('data-id');
+                $('#orderId').val(orderId);
+            });
+        });
+
+        $('#confirmForm').on('submit', function(e){
+            // var shippingFee = $('#shippingFee').val();
+            var orderId = $('#orderId').val();
+            var customerName = $('#customerName').val();
+            var phoneNumber = $('#phoneNumber').val();
+            var specificAddress = $('#specific-address').val();
+            var city = $('#city').val();
+            var district = $('#district').val();
+            var ward = $('#ward').val();
+            var phoneRegex = /(03|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
+            if(!customerName.trim() || customerName.trim().length < 2 || customerName.trim().length > 50){
+                e.preventDefault();
+                $('#customerNameError').text('Tên không được trống và từ 2 đến 50 ký tự');
+            } else if(!phoneNumber.trim()){
+                e.preventDefault();
+                $('#phoneNumberError').text('SĐT không được trống');
+            } else if(!phoneRegex.test(phoneNumber.trim())){
+                e.preventDefault();
+                $('#phoneNumberError').text('SĐT không đúng định dạng');
+            } else if(!specificAddress.trim()){
+                e.preventDefault();
+                $('#specificAddressError').text('Số nhà, đường không được để trống');
+            } else if(city === ""){
+                e.preventDefault();
+                $('#cityError').text('Vui lòng chọn tỉnh thành');
+            } else if(district === ""){
+                e.preventDefault();
+                $('#districtError').text('Vui lòng chọn quận huyện');
+            } else if(ward === ""){
+                e.preventDefault();
+                $('#wardError').text('Vui lòng chọn phường xã');
+            }  else if(orderId === ''){
+                e.preventDefault();
+            } else {
+                e.preventDefault(); // Ngăn chặn việc gửi form ngay lập tức
+                $('#customerNameError').text('');
+                $('#phoneNumberError').text('');
+                $('#specificAddressError').text('');
+                $('#cityError').text('');
+                $('#districtError').text('');
+                $('#wardError').text('');
+                Swal.fire({
+                    title: "Xác nhận?",
+                    text: `Xác nhận đổi địa chỉ nhận hàng?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    cancelButtonText: 'Hủy',
+                    confirmButtonText: 'Xác nhận',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit(); // Gửi form khi người dùng nhấp vào 'Xác nhận'
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        document.querySelector('input[name="quantity"]').addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Chỉ cho phép số dương và không cho phép để trống hoặc dấu cách
+            e.target.value = value.replace(/[^0-9]| /g, '');
+            // Kiểm tra nếu giá trị là chuỗi rỗng
+            if (e.target.value.trim() === '' || e.target.value.trim() === 0) {
+                e.target.value = '1';
+            } else if (e.target.value.trim() > 1000000) {
+                e.target.value = '1000000';
+            }
+        });
+
+    </script>
+    <script>
+        document.querySelector('input[name="productDetailQuantity"]').addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Chỉ cho phép số dương và không cho phép để trống hoặc dấu cách
+            e.target.value = value.replace(/[^0-9]| /g, '');
+            // Kiểm tra nếu giá trị là chuỗi rỗng
+            if (e.target.value.trim() === '' || e.target.value.trim() === 0) {
+                e.target.value = '1';
+            } else if (e.target.value.trim() > 1000000) {
+                e.target.value = '1000000';
+            }
+        });
+
+    </script>
+    <script>
+        $(document).ready(function(){
+            $('.add-btn').on('click', function(){
+                var pdId = $(this).attr('data-id');
+                $('#pdId').val(pdId);
+            });
+        });
+    </script>
+    <script>
+        function searchProducts() {
+            var input, filter, table, tr, td1, td2, i, txtValue1, txtValue2;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("productTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td1 = tr[i].getElementsByTagName("td")[1];
+                td2 = tr[i].getElementsByTagName("td")[2];
+                if (td1 && td2) {
+                    txtValue1 = td1.textContent || td1.innerText;
+                    txtValue2 = td2.textContent || td2.innerText;
+                    if (txtValue1.toUpperCase().indexOf(filter) > -1 || txtValue2.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        document.getElementById("searchInput").addEventListener("input", searchProducts);
+    </script>
+</div>
+</body>
+</html>

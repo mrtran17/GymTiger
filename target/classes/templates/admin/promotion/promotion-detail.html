@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Promotion Management</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="font-weight: bold">KHUYẾN MÃI CHI TIẾT</h5>
+            </div>
+
+            <div class="card-body card-block">
+                <form id="promotionUpdate" th:object="${promotion}"
+                      th:action="@{/tiger/promotion/update/{id}(id=${promotion.id})}"
+                      method="post" class="form-horizontal">
+                    <div class=" form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Mã khuyến mãi</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="code" name="code" th:field="*{code}" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Tên
+                            khuyến mãi</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="name"
+                                   id="name"
+                                   th:value="*{name}"
+                                   oninput="onInputText('errorName')">
+                            <small class="" style="color: red"
+                                   id="errorName"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Phần trăm
+                            giảm</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="value"
+                                   id="value"
+                                   th:value="*{value}"
+                                   oninput="onInputText('errorValue')">
+                            <small class="" style="color: red"
+                                   id="errorValue"></small>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Ngày bắt
+                            đầu</label>
+                        <div class="col-sm-10">
+                            <div id="start-date-picker"
+                                 class="md-form md-outline input-with-post-icon datepicker"
+                                 inline="true">
+                                <input placeholder="Choose start date"
+                                       type="datetime-local"
+                                       id="startDate"
+                                       class="form-control"
+                                       name="startDate"
+                                       th:value="*{startDate}"
+                                       oninput="onInputText('errorStartDate')"
+                                >
+
+                                <small class="" style="color: red"
+                                       id="errorStartDate"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label font-weight-bold">Ngày kết
+                            thúc</label>
+                        <div class="col-sm-10">
+                            <div id="end-date-picker"
+                                 class="md-form md-outline input-with-post-icon datepicker"
+                                 inline="true">
+                                <input placeholder="Choose start date"
+                                       type="datetime-local"
+                                       id="endDate"
+                                       class="form-control"
+                                       name="endDate"
+                                       th:value="*{endDate}"
+                                       oninput="onInputText('errorEndDate')"
+                                >
+                                <small class="" style="color: red"
+                                       id="errorEndDate"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex">
+                        <div>
+                            <button onclick="clickUpdate('promotionUpdate')" type="button" class="btn btn-dark"><i
+                                    class="fa-solid fa-pen mr-1 px-4"></i>
+                            </button>
+                            <a href="/tiger/promotion/page">
+                                <button type="button" class="btn btn-warning"><i
+                                        class="fa-solid fa-circle-left mr-1 px-4"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                    <script th:inline="javascript">
+                        let enteredCodes = new Set();
+
+                        function onInputText(errorElementId) {
+                            document.getElementById(errorElementId).innerHTML = '';
+                        }
+
+                        checkName = () => {
+                            let isName = document.getElementById('name').value
+                            if (isName.trim() === '') {
+                                document.getElementById('errorName').innerHTML = `Chưa nhập tên`
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        checkValue = () => {
+                            let isValue = document.getElementById('value').value;
+                            let errorElement = document.getElementById('errorValue');
+                            errorElement.innerHTML = '';
+                            if (isValue.trim() === '') {
+                                errorElement.innerHTML = 'Chưa nhập giá trị';
+                                return false;
+                            }
+                            if (isNaN(isValue)) {
+                                errorElement.innerHTML = 'Vui lòng nhập một giá trị số';
+                                return false;
+                            }
+                            isValue = parseFloat(isValue);
+                            if (isValue <= 0) {
+                                errorElement.innerHTML = 'Phần trăm giảm phải lớn hơn  0 %';
+                                return false
+                            }
+                            if (isValue > 50) {
+                                errorElement.innerHTML = 'Phần trăm giảm phải nhỏ hơn hoặc bằng 50 %';
+                                return false;
+                            }
+                            return true;
+                        };
+                        checkStartDate = () => {
+                            let startDateInput = document.getElementById('startDate');
+                            let errorStartDate = document.getElementById('errorStartDate');
+
+                            let startDateValue = startDateInput.value.trim();
+                            if (startDateValue === '') {
+                                errorStartDate.innerHTML = `Chưa nhập ngày bắt đầu`;
+                                return false;
+                            }
+
+                            errorStartDate.innerHTML = '';
+                            return true;
+                        }
+
+                        checkEndDate = () => {
+                            let endDateInput = document.getElementById('endDate');
+                            let errorEndDate = document.getElementById('errorEndDate');
+
+                            let endDateValue = endDateInput.value.trim();
+                            if (endDateValue === '') {
+                                errorEndDate.innerHTML = `Chưa nhập ngày kết thúc`;
+                                return false;
+                            }
+
+                            let startDateValue = document.getElementById('startDate').value.trim();
+                            let startDate = new Date(startDateValue);
+                            let endDate = new Date(endDateValue);
+
+                            let currentDate = new Date();
+
+                            if (endDate <= startDate) {
+                                errorEndDate.innerHTML = `Ngày kết thúc phải lớn hơn ngày bắt đầu`;
+                                return false;
+                            }
+
+                            if (endDate <= currentDate) {
+                                errorEndDate.innerHTML = `Ngày kết thúc phải lớn hơn ngày hiện tại`;
+                                return false;
+                            }
+
+                            errorEndDate.innerHTML = '';
+                            return true;
+                        }
+
+                        validate = () => {
+                            let isName = checkName();
+                            let isValue = checkValue();
+                            let isStartDate = checkStartDate()
+                            let isEndDate = checkEndDate()
+                            if (isName === true && isValue === true && isStartDate === true && isEndDate === true) {
+                                return true;
+                            }
+                        }
+
+                        clickUpdate = ( idForm) => {
+                            if (validate()) {
+                                Swal.fire({
+                                    title: "Sửa dữ liệu",
+                                    text: "Bạn có muốn sửa dữ liệu không ?",
+                                    icon: "question",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#0DC149",
+                                    cancelButtonColor: "#d33",
+                                    confirmButtonText: "Có",
+                                    cancelButtonText: "Không",
+                                    allowOutsideClick: false
+                                }).then((update) => {
+                                    if (update.isConfirmed) {
+                                        document.getElementById(idForm).submit()
+                                    }
+                                });
+                            }
+
+                        }
+                    </script>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="font-weight: bold">LOẠI SẢN PHẨM</h5>
+            </div>
+            <div th:if="${mess}">
+                <button hidden id="btnSuccess" th:onclick="alertSuccess([[${mess}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnSuccess = document.getElementById("btnSuccess");
+                        btnSuccess.click();
+                    }
+                    alertSuccess = (content) => {
+                        Swal.fire({
+                            title: content,
+                            icon: "success",
+                            confirmButtonColor: "#0DC149"
+                        });
+                    }
+                </script>
+            </div>
+            <div th:if="${error}">
+                <button hidden id="btnError" th:onclick="alertError([[${error}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnError = document.getElementById("btnError");
+                        btnError.click();
+                    }
+                    alertError = (content) => {
+                        Swal.fire({
+                            title: "Thêm dữ liệu thất bại",
+                            text: content,
+                            icon: "error",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                </script>
+            </div>
+
+            <div class="card-body card-block">
+                <form id="categoryExcel" enctype="multipart/form-data">
+                    <div class="card-footer">
+                        <div class="custom-file">
+                            <input type="file" id="importFile" name="excelFile" accept=".xls, .xlsx"
+                                   onchange="setFileName()">
+                            <label class="custom-file-label" for="importFile">Chọn tệp excel</label>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between">
+                            <div class="d-flex align-content-center">
+                                <button type="button"
+                                        onclick="importExcel('categoryExcel', 'importFile', 'errorExcel', 'category')"
+                                        class="btn btn-success">
+                                    <i class="fa-solid fa-file-excel px-4"></i>
+                                </button>
+                                <div id="errorExcel" class="ml-2" style="color: red;"></div>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger" type="button"
+                                        onclick="downLoadTemplate('categoryExcel', 'category')">
+                                    <i class="fa-solid fa-table px-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
+                <form id="categoryForm" class="form-horizontal">
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Thêm dữ liệu</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="font-weight-bold form-control-label">Tên loại sản phẩm</label>
+                                            <div class="" style="color: red" id="errorName"></div>
+                                        </div>
+                                        <input type="text" id="name" name="name"
+                                               class="form-control" oninput="onInputText('errorName')">
+                                    </div>
+                                </div>
+                                <script th:inline="javascript">
+                                    const inputElement = document.getElementById('name');
+
+                                    inputElement.addEventListener('input', function(event) {
+                                        const specialCharacters = /[!@#$%^&*()_,.?":{}|'<>+\-=~`\\/\[\]]/g;
+                                        const inputValue = event.target.value;
+                                        if (specialCharacters.test(inputValue)) {
+                                            event.target.value = inputValue.replace(specialCharacters, '');
+                                        }
+                                    });
+
+                                </script>
+                                <div class="modal-footer">
+                                    <button onclick="clickAdd('category', 'categoryForm', 'name', 'errorName', 'tên loại sản phẩm')"
+                                            type="button" class="btn btn-dark"><i
+                                            class="fa-solid fa-square-plus px-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-search">
+                        <div class="col-md-1">
+                            <button onclick="clickSearch('category', 'categoryForm')" type="button"
+                                    class="btn btn-dark">
+                                <i class="fa-solid fa-magnifying-glass px-4"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-11">
+                            <input type="text" placeholder="Nhập tên loại..."
+                                   th:value="${categoryNameSearch}" th:name="categoryNameSearch"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card-footer d-flex justify-content-end">
+                        <div>
+                            <button type="button" class="btn btn-dark" data-toggle="modal"
+                                    data-target="#exampleModal">
+                                <i class="fa-solid fa-square-plus px-4"></i>
+                            </button>
+                        </div>
+<!--                        <div class="ml-2">-->
+<!--                            <a href="/tiger/category/view-restore">-->
+<!--                                <button type="button" class="btn btn-dark">-->
+<!--                                    <i class="fa-solid fa-warehouse px-4"></i>-->
+<!--                                </button>-->
+<!--                            </a>-->
+<!--                        </div>-->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    </h1>
+    <div class="col">
+        <div class="card">
+            <div class="card-header" th:if="${pageCategory.isEmpty()}">
+                <strong class="card-title">KHÔNG CÓ DỮ LIỆU</strong>
+            </div>
+            <div th:if="${not pageCategory.isEmpty()}">
+                <div class="card-header">
+                    <strong>CÓ</strong>
+                    <strong class="card-title" th:text="${pageCategory.getTotalElements()}"></strong>
+                    <strong class="card-title"> BẢN GHI</strong>
+                </div>
+                <div class="card-body">
+                    <form id="categoryDelete">
+                        <table class="table text-center">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Mã Loại</th>
+                                <th scope="col">Tên loại</th>
+                                <th scope="col">Chức năng</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="items:${pageCategory}">
+                                <td th:text="${items.code}"></td>
+                                <td th:text="${items.name}"></td>
+                                <td class="d-flex justify-content-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-dark" type="button"
+                                                id="dropdownMenuButton" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item"
+                                               th:href="@{'/tiger/category/detail/' + ${items.id}}">
+                                                <i class="fa-solid fa-pen mr-3"></i>Sửa</a>
+                                            <button
+                                                    th:onclick="clickDelete('category', 'categoryDelete', [[${items.id}]])"
+                                                    type="button" class="dropdown-item"><i
+                                                    class="fa-solid fa-trash mr-3"></i>Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+
+                    <!--            Pagination-->
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div th:if="${pageCategory.getNumber() + 1 > 1}" class="btn btn-dark mr-1">
+                            <a th:href="@{|?page=0&categoryNameSearch=${categoryNameSearch}|}">
+                                </i><i style="color: white" class="fa-solid fa-backward-fast"></i></a>
+                        </div>
+                        <div th:if="${pageCategory.getNumber() + 1 > 1}" class="btn btn-dark mr-1">
+                            <a th:href="@{|?page=${pageCategory.getNumber() - 1}&categoryNameSearch=${categoryNameSearch}|}">
+                                <i style="color: white" class="fa-solid fa-left-long"></i></a>
+                        </div>
+                        <div class="btn btn-dark d-flex">
+                            <div th:text="${pageCategory.getNumber() + 1}"></div>
+                            <span>/</span>
+                            <div th:text="${pageCategory.getTotalPages()}"></div>
+                        </div>
+                        <div th:if="${pageCategory.getNumber() + 1 lt pageCategory.getTotalPages()}"
+                             class="btn btn-dark ml-1">
+                            <a th:href="@{|?page=${pageCategory.getNumber()+1}&categoryNameSearch=${categoryNameSearch}|}">
+                                <i style="color: white" class="fa-solid fa-left-long fa-rotate-180"></i></a>
+                        </div>
+                        <div th:if="${pageCategory.getNumber() + 1 lt pageCategory.getTotalPages()}"
+                             class="btn btn-dark ml-1">
+                            <a th:href="@{|?page=${pageCategory.getTotalPages()-1}&categoryNameSearch=${categoryNameSearch}|}">
+                                <i style="color: white" class="fa-solid fa-forward-fast"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

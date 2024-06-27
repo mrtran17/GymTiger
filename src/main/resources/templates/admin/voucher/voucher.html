@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Voucher Management</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="font-weight: bold">VOUCHER</h5>
+            </div>
+            <!--            Notification-->
+            <div th:if="${mess}">
+                <button hidden id="btnSuccess" th:onclick="alertSuccess([[${mess}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnSuccess = document.getElementById("btnSuccess");
+                        btnSuccess.click();
+                    }
+                    alertSuccess = (content) => {
+                        Swal.fire({
+                            title: content,
+                            icon: "success",
+                            confirmButtonColor: "#0DC149"
+                        });
+                    }
+                </script>
+            </div>
+            <div th:if="${error}">
+                <button hidden id="btnError" th:onclick="alertError1([[${error}]])">Click Me</button>
+                <script th:inline="javascript">
+                    window.onload = function () {
+                        var btnError = document.getElementById("btnError");
+                        btnError.click();
+                    }
+                    alertError1 = (content) => {
+                        Swal.fire({
+                            title: "Lỗi",
+                            text: content,
+                            icon: "error",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                </script>
+            </div>
+            <div class="card-body card-block">
+                <form th:action="@{/tiger/voucher/search}" method="get">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label >Mã voucher</label>
+                            <input type="text" class="form-control" name="code" th:value="${code}">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Trạng thái</label>
+                            <select class="form-control" name="status" th:value="${status}">
+                                <option value="">Tất cả</option>
+                                <option  value="1" th:selected="${status == 1}">Hoạt động</option>
+                                <option value="2" th:selected="${status == 2}">Đang chờ</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="name">Tên voucher</label>
+                            <input type="text" class="form-control" name="name" th:value="${name}">
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label>Khoảng ngày kết thúc</label>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control" name="ngayTaoStart"
+                                           th:value="${ngayTaoStart}">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control" name="ngayTaoEnd" th:value="${ngayTaoEnd}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-1" style="margin-top: 30px">
+                            <button type="submit" class="btn btn-dark "><i class="fas fa-search px-4"></i></button>
+                        </div>
+                    </div>
+                </form>
+                <form id="voucherForm" th:action="@{/tiger/voucher/add}" th:object="${voucher}" method="post"
+                      class="form-horizontal">
+                    <div class="d-flex">
+                        <div class="">
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#addModal">
+                                <i class="fa-solid fa-square-plus px-4"></i>
+                            </button>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+                             aria-labelledby="addModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addModalLabel">Thêm mới voucher</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Thêm voucher</strong>
+                                            </div>
+                                            <div class="card-body card-block">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Tên
+                                                        voucher</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" name="name"
+                                                               id="name"
+                                                               oninput="onInputText('errorName')">
+                                                        <small class="" style="color: red"
+                                                               id="errorName"></small>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Số
+                                                        lượng</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" name="quantity"
+                                                               id="quantity"
+                                                               oninput="onInputText('errorQuantity')">
+                                                        <small class="" style="color: red"
+                                                               id="errorQuantity"></small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Giá tối
+                                                        thiểu</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" name="minimumPrice"
+                                                               id="minimumPrice"
+                                                               oninput="onInputText('errorMinimumPrice')">
+                                                        <small class="" style="color: red"
+                                                               id="errorMinimumPrice"></small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Số tiền
+                                                        giảm</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" name="value"
+                                                               id="value"
+                                                               oninput="onInputText('errorValue')">
+                                                        <small class="" style="color: red"
+                                                               id="errorValue"></small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Ngày bắt
+                                                        đầu</label>
+                                                    <div class="col-sm-10">
+                                                        <div id="start-date-picker"
+                                                             class="md-form md-outline input-with-post-icon datepicker"
+                                                             inline="true">
+                                                            <input placeholder="Choose start date"
+                                                                   type="datetime-local"
+                                                                   id="startDate"
+                                                                   class="form-control"
+                                                                   name="startDate"
+
+                                                                   oninput="onInputText('errorStartDate')"
+                                                            >
+
+                                                            <small class="" style="color: red"
+                                                                   id="errorStartDate"></small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Ngày kết
+                                                        thúc</label>
+                                                    <div class="col-sm-10">
+                                                        <div id="end-date-picker"
+                                                             class="md-form md-outline input-with-post-icon datepicker"
+                                                             inline="true">
+                                                            <input placeholder="Choose start date"
+                                                                   type="datetime-local"
+                                                                   id="endDate"
+                                                                   class="form-control"
+                                                                   name="endDate"
+                                                                   oninput="onInputText('errorEndDate')"
+                                                            >
+                                                            <small class="" style="color: red"
+                                                                   id="errorEndDate"></small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Đóng
+                                                    </button>
+                                                    <button onclick="clickAdd('voucher', 'voucherForm')"
+                                                            type="button" class="btn btn-dark"><i
+                                                            class="fa-solid fa-square-plus px-4"></i>
+                                                    </button>
+                                                </div>
+                                                <script th:inline="javascript">
+                                                    checkName = () => {
+                                                        let isName = document.getElementById('name').value
+                                                        if (isName.trim() === '') {
+                                                            document.getElementById('errorName').innerHTML = `Chưa nhập tên`
+                                                            return false;
+                                                        }
+                                                        return true;
+                                                    }
+
+                                                    checkQuantity = () => {
+                                                        let isQuantity = document.getElementById('quantity').value;
+                                                        if (!isNonNegativeInteger(isQuantity)) {
+                                                            document.getElementById('errorQuantity').innerHTML = 'Vui lòng nhập một số nguyên không âm';
+                                                            return false;
+                                                        }
+
+                                                        isQuantity = parseInt(isQuantity);
+
+                                                        if (isQuantity <= 0) {
+                                                            document.getElementById('errorQuantity').innerHTML = 'Số lượng phải lớn hơn   0';
+                                                            return false;
+                                                        }
+
+                                                        if (isQuantity > 30) {
+                                                            document.getElementById('errorQuantity').innerHTML = 'Số lượng voucher cao nhất là 30';
+                                                            return false;
+                                                        }
+
+                                                        return true;
+                                                    }
+
+                                                    function isNonNegativeInteger(value) {
+                                                        return /^\d+$/.test(value);
+                                                    }
+
+                                                    checkValue = () => {
+                                                        let isValue = document.getElementById('value').value;
+                                                        let minimumPrice = document.getElementById('minimumPrice').value;
+
+                                                        if (!isNumeric(isValue)) {
+                                                            document.getElementById('errorValue').innerHTML = 'Vui lòng nhập một giá trị số';
+                                                            return false;
+                                                        }
+
+                                                        isValue = parseFloat(isValue);
+
+                                                        if (isValue <= 10000) {
+                                                            document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải lớn hơn 10000đ';
+                                                            return false;
+                                                        }
+
+                                                        if (isValue !== '' && minimumPrice !== '' && isValue >= parseFloat(minimumPrice)) {
+                                                            document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải nhỏ hơn giá tối thiểu.';
+                                                            return false;
+                                                        }
+
+                                                        return true;
+                                                    }
+
+                                                    function isNumeric(value) {
+                                                        return !isNaN(parseFloat(value)) && isFinite(value);
+                                                    }
+
+                                                    checkMinimumPrice = () => {
+                                                        let isValue = document.getElementById('value').value;
+                                                        let isMinimumPrice = document.getElementById('minimumPrice').value;
+                                                        if (!isNumeric(isMinimumPrice)) {
+                                                            document.getElementById('errorMinimumPrice').innerHTML = 'Vui lòng nhập một giá trị số';
+                                                            return false;
+                                                        }
+
+                                                        isMinimumPrice = parseFloat(isMinimumPrice);
+
+                                                        if (isMinimumPrice < 100000) {
+                                                            document.getElementById('errorMinimumPrice').innerHTML = 'Giá trị tối thiểu lớn hơn 100000đ';
+                                                            return false;
+                                                        }
+
+                                                        if (isValue !== '' && isMinimumPrice !== '' && parseFloat(isValue) > isMinimumPrice) {
+                                                            document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải nhỏ hơn hoặc bằng giá tối thiểu.';
+                                                            return false;
+                                                        }
+
+                                                        return true;
+                                                    }
+
+                                                    function isNumeric(value) {
+                                                        return !isNaN(parseFloat(value)) && isFinite(value);
+                                                    }
+
+                                                    checkStartDate = () => {
+                                                        let startDateInput = document.getElementById('startDate');
+                                                        let errorStartDate = document.getElementById('errorStartDate');
+
+                                                        let startDateValue = startDateInput.value.trim();
+                                                        if (startDateValue === '') {
+                                                            errorStartDate.innerHTML = `Chưa nhập ngày bắt đầu`;
+                                                            return false;
+                                                        }
+
+                                                        errorStartDate.innerHTML = '';
+                                                        return true;
+                                                    }
+
+                                                    checkEndDate = () => {
+                                                        let endDateInput = document.getElementById('endDate');
+                                                        let errorEndDate = document.getElementById('errorEndDate');
+
+                                                        let endDateValue = endDateInput.value.trim();
+                                                        if (endDateValue === '') {
+                                                            errorEndDate.innerHTML = `Chưa nhập ngày kết thúc`;
+                                                            return false;
+                                                        }
+
+                                                        let startDateValue = document.getElementById('startDate').value.trim();
+                                                        let startDate = new Date(startDateValue);
+                                                        let endDate = new Date(endDateValue);
+
+                                                        let currentDate = new Date();
+
+                                                        if (endDate <= startDate) {
+                                                            errorEndDate.innerHTML = `Ngày kết thúc phải lớn hơn ngày bắt đầu`;
+                                                            return false;
+                                                        }
+
+                                                        if (endDate <= currentDate) {
+                                                            errorEndDate.innerHTML = `Ngày kết thúc phải lớn hơn ngày hiện tại`;
+                                                            return false;
+                                                        }
+                                                        errorEndDate.innerHTML = '';
+                                                        return true;
+                                                    }
+
+                                                    validate = () => {
+                                                        let isName = checkName();
+                                                        let isQuantity = checkQuantity();
+                                                        let isValue = checkValue();
+                                                        let isMinimumPrice = checkMinimumPrice()
+                                                        let isStartDate = checkStartDate()
+                                                        let isEndDate = checkEndDate()
+                                                        if (isName === true && isQuantity === true && isValue === true && isMinimumPrice === true && isStartDate === true && isEndDate === true) {
+                                                            return true;
+                                                        }
+                                                    }
+
+                                                    clickAdd = (entity, idForm) => {
+                                                        if (validate()) {
+                                                            Swal.fire({
+                                                                title: "Thêm dữ liệu",
+                                                                text: "Bạn có muốn thêm dữ liệu không ?",
+                                                                icon: "question",
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: "#0DC149",
+                                                                cancelButtonColor: "#d33",
+                                                                confirmButtonText: "Có",
+                                                                cancelButtonText: "Không",
+                                                                allowOutsideClick: false
+                                                            }).then((add) => {
+                                                                if (add.isConfirmed) {
+                                                                    document.getElementById(idForm).action = '/tiger/' + entity + '/add'
+                                                                    document.getElementById(idForm).method = 'post'
+                                                                    document.getElementById(idForm).submit()
+                                                                }
+                                                            });
+                                                        }
+
+                                                    }
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header" th:if="${pageVoucher.isEmpty()}">
+                <strong class="card-title">KHÔNG CÓ DỮ LIỆU</strong>
+            </div>
+            <div th:if="${not pageVoucher.isEmpty()}">
+                <div class="card-header">
+                    <strong>CÓ</strong>
+                    <strong class="card-title" th:text="${pageVoucher.getTotalElements()}"></strong>
+                    <strong class="card-title"> BẢN GHI</strong>
+                </div>
+                <div class="card-body">
+                    <form id="voucherDelete">
+                        <table class="table text-center">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Mã voucher</th>
+                                <th scope="col">Tên voucher</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Giá trị giảm</th>
+                                <th scope="col">Giá thấp nhất</th>
+                                <th scope="col">Ngày bắt đầu</th>
+                                <th scope="col">Ngày kết thúc</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Chức năng</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="items:${pageVoucher}">
+                                <td th:text="${items.code}"></td>
+                                <td th:text="${items.name}"></td>
+                                <td th:text="${items.quantity}"></td>
+                                <td th:text="${#numbers.formatDecimal(items.value, 0, 0)}"></td>
+                                <td th:text="${#numbers.formatDecimal(items.minimumPrice, 0, 0)}"></td>
+                                <td th:text="${#dates.format(items.startDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                                <td th:text="${#dates.format(items.endDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                                <td>
+                                    <span th:if="${items.status == 1}">Hoạt động</span>
+                                    <span th:if="${items.status == 2}">Đang chờ</span>
+                                </td>
+                                <td class="d-flex justify-content-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-dark" type="button"
+                                                id="dropdownMenuButton" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item"
+                                               th:href="@{'/tiger/voucher/detail/' + ${items.id}}">
+                                                <i class="fa-solid fa-pen mr-3"></i>Sửa</a>
+                                            <button
+                                                    th:onclick="clickDelete('voucher', 'voucherDelete', [[${items.id}]])"
+                                                    type="button" class="dropdown-item"><i
+                                                    class="fa-solid fa-trash mr-3"></i>Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div th:if="${pageVoucher.getNumber() + 1 > 1}" class="btn btn-dark mr-1">
+                            <a th:href="@{|?page=0&voucherNameSearch=${voucherNameSearch}|}">
+                                </i><i style="color: white" class="fa-solid fa-backward-fast"></i></a>
+                        </div>
+                        <div th:if="${pageVoucher.getNumber() + 1 > 1}" class="btn btn-dark mr-1">
+                            <a th:href="@{|?page=${pageVoucher.getNumber() - 1}&voucherNameSearch=${voucherNameSearch}|}">
+                                <i style="color: white" class="fa-solid fa-left-long"></i></a>
+                        </div>
+                        <div class="btn btn-dark d-flex">
+                            <div th:text="${pageVoucher.getNumber() + 1}"></div>
+                            <span>/</span>
+                            <div th:text="${pageVoucher.getTotalPages()}"></div>
+                        </div>
+                        <div th:if="${pageVoucher.getNumber() + 1 lt pageVoucher.getTotalPages()}"
+                             class="btn btn-dark ml-1">
+                            <a th:href="@{|?page=${pageVoucher.getNumber()+1}&voucherNameSearch=${voucherNameSearch}|}">
+                                <i style="color: white" class="fa-solid fa-left-long fa-rotate-180"></i></a>
+                        </div>
+                        <div th:if="${pageVoucher.getNumber() + 1 lt pageVoucher.getTotalPages()}"
+                             class="btn btn-dark ml-1">
+                            <a th:href="@{|?page=${pageVoucher.getTotalPages()-1}&voucherNameSearch=${voucherNameSearch}|}">
+                                <i style="color: white" class="fa-solid fa-forward-fast"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
