@@ -1,7 +1,7 @@
 USE [master]
 GO
 /****** Object:  Database [GymTiger_DB]    Update: 13/1/2023 16:31 AM ******/
-CREATE DATABASE [GymTiger]
+CREATE DATABASE [GymTiger_DB]
 GO
 USE [GymTiger_DB]
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
