@@ -1,0 +1,252 @@
+<!--
+  ~  © 2023 Nyaruko166
+  -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin-layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>Quầy hàng</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<section layout:fragment="content">
+  <div><h1 align="center">DANH SÁCH SẢN PHẨM</h1></div>
+  <div class="conban" style="float: left">
+    <table style="width: 100%">
+      <tr>
+        <td>
+          <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#myModal">
+            Tìm kiếm sản phẩm
+          </button>
+        </td>
+        <td></td>
+        <td></td>
+        <td>
+          <a style="float: right" type="button" href="/tiger/pos" class="btn btn-warning">Quay lại</a>
+        </td>
+      </tr>
+    </table>
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Lọc sản phẩm</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <form th:action="@{/tiger/pos/locSP}" method="post">
+              <table>
+                <tr>
+                  <td class="tieude">Từ khóa:</td>
+                  <td><input class="noidungtimkiem" type="text"name="tukhoa"></td>
+                </tr>
+                <tr>
+                  <td class="tieude">Chất liệu:</td>
+                  <td><select class="noidungtimkiem" name="chatlieu">
+                    <option value="%%">Tất cả</option>
+                    <option th:each="k : ${chatlieuL}" th:value="${k.code}" th:text="${k.name}">
+
+                    </option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td class="tieude">Màu sắc:</td>
+                  <td><select class="noidungtimkiem" name="mausac">
+                    <option value="%%">Tất cả</option>
+                    <option th:each="k : ${mausacL}" th:value="${k.code}" th:text="${k.name}">
+                  </select></td>
+                </tr>
+                <tr>
+                  <td class="tieude">Kích cỡ:</td>
+                  <td><select class="noidungtimkiem" name="kichco">
+                    <option value="%%">Tất cả</option>
+                    <option th:each="k : ${sizeL}" th:value="${k.code}" th:text="${k.name}">
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><button type="submit" class="btn btn-primary">Tìm kiếm</button></td>
+                </tr>
+              </table>
+            </form>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <table align="center" class="danhsach" style="font-size: 16px">
+      <tr class="gachphai">
+        <th class="gachphai"></th>
+        <th class="gachphai">Tên sản phẩm</th>
+        <th class="gachphai">Chất liệu</th>
+        <th class="gachphai">Màu sắc</th>
+        <th class="gachphai">Kích cỡ</th>
+        <th class="gachphai">Số lượng tồn</th>
+        <th>Tùy chọn<th/>
+      </tr>
+      <tr th:each="k : ${danhsachSP}" class="gachphai">
+        <td class="gachphai"><img th:src="@{${'/assets/product/'+k.product.listImage.get(0).name}}" alt="@{/images/favicon.png}" srcset="" style="width: 40px"/></td>
+        <td class="gachphai">[(${k.product.name})]</td>
+        <td class="gachphai">[(${k.product.material.name})]</td>
+        <td class="gachphai">[(${k.color.name})]</td>
+        <td class="gachphai">[(${k.size.name})]</td>
+        <td class="gachphai">[(${k.quantity})]</td>
+        <td>
+          <a th:href="@{/tiger/pos/chon_de_them_vao_hd/{id}(id=${k.id})}" class="btn btn-primary" style="background-color: dodgerblue">Thêm vào giỏ</a>
+        </td>
+      </tr>
+    </table>
+  </div >
+</section>
+
+</div>
+
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<link rel="stylesheet" th:href="@{/css/kieuBanTaiQuay.css}">
+<style>
+  table,tr,th,td{
+    border:none;
+    padding: 2px;
+  }
+  .danhsach{
+    width: 96%;
+    font-family: Arial;
+  }
+  .gachphai{
+    border: none;
+    border-bottom: 1px solid black;
+  }
+  a:hover{
+    text-decoration: none;
+    color: white;
+  }
+  table{
+    width: 100%;
+  }
+  .tieude{
+    width: 40%;
+  }
+  .noidungtimkiem{
+    width: 70%;
+  }
+</style>
+<script th:inline="javascript">
+  let thieutienko = false;
+
+  function myFunction1() {
+    let kiemtrahoadon = dachonHD();
+
+    if (kiemtrahoadon==false){
+      return kiemtrahoadon;
+    }
+    let text = "Bạn chắc chắn muốn thanh toán không";
+    let kt = confirm(text);
+    if (kt == true) {
+      if (thieutienko == false){
+        confirm("Thanh toán thành công");
+        return true;
+      } else {
+        alert("Khách đưa không đủ tiền");
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  function dachonHD() {
+    const kiemtraidHd = document.getElementById('idHdDuocChon').value;
+    if(!kiemtraidHd){
+      alert("Yêu cầu chọn hóa đơn");
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  function taoHD(x) {
+    const soLuongHd = parseInt(x);
+    if (soLuongHd>=5){
+      alert("Số lượng hóa đơn tối đa là 5");
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  function kiemsoluong(slTrongGio, slCaKho, idonhap){
+    const ma = 'slcua'+idonhap;
+    const soluongnhap = document.getElementById(ma).value;
+    const tongKho = slTrongGio + slCaKho;
+    if(soluongnhap<1){
+      alert('Số lượng không hợp lệ');
+      return false;
+    }else if(soluongnhap>tongKho){
+      alert('Trong cửa hàng chỉ có '+tongKho+" sản phẩm này");
+      return false;
+    }else {
+      alert("Số lượng sản phẩm trong giỏ đã được đổi thành "+soluongnhap);
+      return true;
+    }
+  }
+
+  function xacnhanxoa(khd){
+    if (khd==2){
+      let kiemHD = kiemtrahdduocchon();
+      if(kiemHD==false){
+        return kiemHD;
+      }
+    }
+    let xacnhan = confirm("Bạn có muốn xóa không");
+    return xacnhan;
+  }
+
+  function tinhTienThua() {
+    const tongTien = parseFloat(document.getElementById("giaSale").value);
+    const tienKhachDua = parseFloat(document.getElementById("tienKhachDua").value);
+    const tienThua = tienKhachDua - tongTien;
+
+    const tienThuaInput = document.getElementById("tienThua");
+    if (tienThua >= 0) {
+      tienThuaInput.value = tienThua.toFixed(2);
+      thieutienko = false;
+    } else {
+      tienThuaInput.value = tienThua.toFixed(2);
+      thieutienko = true;
+    }
+
+  }
+
+  function demhd(x){
+    if (x>=5){
+      alert("Số hóa đơn chờ tối đa là 5");
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  document.getElementById("tienKhachDua").addEventListener("change", tinhTienThua);
+  document.getElementById("giaSale").addEventListener("change", tinhTienThua);
+
+</script>

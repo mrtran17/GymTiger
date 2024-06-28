@@ -102,7 +102,7 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public List<Bill> getAllBill() {
-        return billRepository.findAllByStatus(1);
+        return billRepository.findAll();
     }
 
     @Override
@@ -873,5 +873,17 @@ public class BillServiceImpl implements BillService {
             workbook.close();
             outputStream.flush();
         }
+    }
+
+    @Override
+    public List<Bill> findAllByStatus(Integer status) {
+        return billRepository.findAllByStatus(status);
+    }
+
+    @Override
+    public void deleteBillDetail(BillDetail id) {
+        id.setQuantity(0);
+        id.setStatus(0);
+        billDetailRepository.save(id);
     }
 }

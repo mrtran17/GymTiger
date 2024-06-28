@@ -68,6 +68,11 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
+    public List<Voucher> ActiveVoucher() {
+        return voucherRepository.findAllByStatusOrderByIdDesc(1);
+    }
+
+    @Override
     public List<Voucher> getAll() {
         return voucherRepository.findAllByStatusOrderByIdDesc(1);
     }

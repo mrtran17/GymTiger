@@ -77,4 +77,8 @@ public interface BillService {
     String generateBillCode();
 
     void exportToExcel(HttpServletResponse response, Page<BillDto> bills, String exportUrl) throws IOException;
+
+    List<Bill> findAllByStatus(Integer status);
+
+    void deleteBillDetail(BillDetail id);
 }

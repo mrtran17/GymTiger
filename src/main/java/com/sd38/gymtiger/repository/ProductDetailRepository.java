@@ -139,4 +139,11 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
     List<ProductDetailDto> getProductByPriceAndSizeIdAndColorIdDeleted(Integer productId, BigDecimal priceMin, BigDecimal priceMax, Integer sizeId, Integer colorId);
 
     List<ProductDetail> findAllByStatusOrderByIdDesc(Integer status);
+
+    @Query("select prd from ProductDetail prd where " +
+            "prd.product.name like ?1 " +
+            "and prd.color.code like ?2 " +
+            "and prd.product.material.code like ?3 " +
+            "and prd.size.code like ?4")
+    List<ProductDetail> locSpTaiQuay(String s, String colorCode, String matrCode, String sizeName);
 }

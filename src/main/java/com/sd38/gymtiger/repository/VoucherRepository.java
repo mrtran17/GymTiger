@@ -17,6 +17,7 @@ import java.util.List;
 public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     Voucher findTopByOrderByIdDesc();
 
+    @Query("select o from Voucher o where o.status=?1")
     List<Voucher> findAllByStatusOrderByIdDesc(Integer status);
 
     List<Voucher> findByEndDateBeforeAndStatus(Date endDate, Integer status);

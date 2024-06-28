@@ -6,6 +6,8 @@ import com.sd38.gymtiger.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
     @Autowired
@@ -14,5 +16,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findByEmail(String email) {
         return customerRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<Customer> findByKwds(String s) {
+        return customerRepository.findByKwds(s);
+    }
+
+    @Override
+    public Customer findById(Integer id) {
+        return customerRepository.getById(id);
     }
 }

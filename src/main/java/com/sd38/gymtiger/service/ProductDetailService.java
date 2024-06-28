@@ -46,4 +46,8 @@ public interface ProductDetailService {
     Page<ProductDetail> findAllByProductNameAndStatus(String name, Integer status, Integer qty, Pageable pageable);
 
     List<ProductDetail> findAllActive();
+
+    List<ProductDetail> locSpTaiQuay(String s, String colorCode, String matrCode, String sizeName);
+
+    void simplizedUpdate(Integer id, ProductDetail productDetail);
 }

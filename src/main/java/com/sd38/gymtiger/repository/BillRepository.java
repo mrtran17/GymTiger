@@ -14,6 +14,8 @@ import java.util.List;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Integer> {
+
+    @Query("select b from Bill b where b.status=?1")
     List<Bill> findAllByStatus(Integer status);
 
     Page<Bill> findAllByStatus(Pageable pageable, Integer status);

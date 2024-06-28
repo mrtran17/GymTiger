@@ -3,288 +3,441 @@
   -->
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/admin-layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Quầy hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-<div layout:fragment="content">
-    <div th:if="${err}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <p th:text="${err}"></p>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="container">
-        <h5 style="font-weight: bold">BÁN HÀNG</h5>
-    </div>
-    <div class="container mt-4 p-3 rounded cart">
-        <div class="row">
-            <div class="col-7">
-                <div class="row no-gutters">
-                    <div class="col-md-12">
-                        <div class="product-details" style="padding: 0">
-                            <div class="topnav">
-                                <a th:each="y:${lstBill}" class="border border-3 rounded"
-                                   th:href="${'/tiger/pos?billId='+y.billId}" th:text="${'Hoá Đơn '+ y.billIdPP()}"></a>
-                                <div style="float: right; margin-top: 12px">
-                                    <button onclick="location.href='/tiger/pos/removeBill'" class="btn btn-dark"
-                                            type="button" data-toggle="tooltip" data-placement="top"
-                                            title="Huỷ hoá đơn hiện tại">
-                                        <i class="fa-regular fa-trash-can" style="color: #ffffff;"></i>
-                                    </button>
-                                    <button onclick="location.href='/tiger/pos/newBill'" type="button"
-                                            class="btn btn-dark" data-toggle="tooltip" data-placement="top"
-                                            title="Tạo hoá đơn mới"><i
-                                            class="fa-regular fa-square-plus" style="color: #ffffff;"></i></button>
-                                    <button onclick="init()" class="btn btn-dark" type="button" data-toggle="collapse"
-                                            data-target="#collapseExample" aria-expanded="false"
-                                            aria-controls="collapseExample" id="qr-toggle"
-                                    >
-                                        <i class="fa-solid fa-qrcode" style="color: #ffffff;"></i>
-                                    </button>
+<section layout:fragment="content">
+    <div><h1 align="center">QUẦY HÀNG</h1></div>
+    <article class="chinh" style="float: left; width: 590px">
+        <table style="width: 100%">
+            <tr>
+                <td><a type="button" href="/tiger/pos/litSP" class="btn btn-success" style="float: left" th:onclick="return dachonHD()">Thêm sản phẩm</a></td>
+                <td><p>[(${yeucauchonHD})]</p></td>
+                <td><p>[(${thongbaogioihanHD})]</p></td>
+                <td><a type="button" href="/tiger/pos/addHD" class="btn btn-success" style="float: right" th:onclick="return taoHD([(${soLuongHD})])">Tạo hóa đơn</a></td>
+            </tr>
+        </table>
+
+
+
+
+        <h3 align="center">Sản Phẩm Trong Hóa Đơn</h3>
+
+        <table align="center" class="danhsach" style="font-size: 12px">
+            <tr class="gachphai">
+                <th class="gachphai"></th>
+                <th class="gachphai">Tên sản phẩm</th>
+                <th class="gachphai">Giá/sản phẩm</th>
+                <th class="gachphai">Số lượng</th>
+                <th><th/>
+            </tr>
+            <tr class="gachphai" th:each="k: ${giohientai}">
+                <td class="gachphai"><img th:src="@{${'/assets/product/'+k.productDetail.product.listImage.get(0).name}}" alt="" srcset="" style="width: 30px"/></td>
+                <td class="gachphai">[(${k.productDetail.product.name})]</td>
+                <td class="gachphai">[(${k.price})]</td>
+                <td class="gachphai">[(${k.quantity})]</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:data-bs-target="${'#exampleModal'+k.id}" style="background-color: dodgerblue; color: white">
+                        Chi tiết
+                    </button>
+                </td>
+
+                <td><!-- Button trigger modal -->
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" th:id="${'exampleModal'+k.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Thông tin sản phẩm</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table style="font-size: 16px">
+                                        <tr>
+                                            <td rowspan="6"><img th:src="@{${'/assets/product/'+k.productDetail.product.listImage.get(0).name}}" alt="" srcset="" style="width: 70%"/></td>
+                                            <td><h4>[(${k.productDetail.product.name})]</h4></td>
+                                        </tr>
+                                        <tr class="cochuTTSP">
+                                            <td class="cochuTTSP">Giá bán: [(${k.productDetail.price})]</td>
+                                        </tr>
+                                        <tr class="cochuTTSP">
+                                            <td>Chất liệu: [(${k.productDetail.product.material.name})]</td>
+                                        </tr>
+                                        <tr class="cochuTTSP">
+                                            <td>Màu sắc: [(${k.productDetail.color.name})]</td>
+                                        </tr>
+                                        <tr class="cochuTTSP">
+                                            <td>Kích cỡ: [(${k.productDetail.size.name})]</td>
+                                        </tr>
+                                        <tr class="cochuTTSP">
+                                            <td>
+                                                <form th:action="@{/tiger/pos/doi_so_luong_tai_quay/{id}(id=${k.id})}" method="post">
+                                                    <label>Số lượng trong hóa đơn:</label>
+                                                    <input type="number" name="soluongmoi" style="width: 50px" th:value="${k.quantity}" th:id="${'slcua'+k.id}">
+                                                    <button type="submit" class="btn btn-primary" th:onclick="return kiemsoluong([(${k.quantity})], [(${k.productDetail.quantity})], [(${k.id})])">Thay đổi số lượng</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <a th:href="@{/tiger/pos/xoa-hdtq/{id}(id=${k.id})}" class="btn btn-danger" style="background-color: crimson">Xóa khỏi giỏ</a>
                                 </div>
                             </div>
                         </div>
-                        <hr>
-                        <h6 class="mb-0" th:text="'Hoá đơn ' + ${session.posBill.billIdPP()}"></h6>
-                        <div id="output">
-                            <div class="d-flex justify-content-between"><span
-                                    th:text="${'Có ' + lstCart.size() + ' sản phẩm trong giỏ hàng'}"></span>
-                                <!--                                <div class="d-flex flex-row align-items-center"><span-->
-                                <!--                                        class="text-black-50">Sort by:</span>-->
-                                <!--                                    <div class="price ml-2"><span class="mr-1">price</span><i-->
-                                <!--                                            class="fa fa-angle-down"></i>-->
-                                <!--                                    </div>-->
-                                <!--                                </div>-->
-                            </div>
+                    </div></td>
 
-                            <div th:each="x:${lstCart}"
-                                 class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-                                <div class="d-flex flex-row"><img class="rounded"
-                                                                  th:src="@{'/image/product/'+${x.idSP}}"
-                                                                  width="40">
-                                    <div class="ml-2"><span th:text="${x.name}"
-                                                            class="font-weight-bold d-block"></span><span
-                                            class="spec" th:text="${x.fieldCombine()}"></span></div>
-                                </div>
-                                <div class="d-flex flex-row align-items-center"><input
-                                        style="width: 40px; box-sizing: border-box;border: none;border-bottom: 2px solid grey;
-text-align: right"
-                                        type="text"
-                                        th:value="${x.qty}"
-                                        th:id="${x.codeCtsp}"
-                                        th:name="${x.qty}"
-                                        onfocusout="updateCart(this)"
-                                        oninput="keepOnlyNumbers(event)"
-                                        class="d-block"></input><span
-                                        th:text="${x.calTotalPrice() + ' VNĐ'}"
-                                        class="d-block ml-5 font-weight-bold"></span>
-                                    <a th:href="@{'/tiger/pos/remove/' + ${x.codeCtsp}}" class="trash"><i
-                                            class="fa fa-trash-o ml-3 text-black-50"></i></a>
+            </tr>
+        </table>
+    </article >
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-5">
-                <div id="output_checkout">
-                    <div class="col-md-12">
-                        <div class="col-md-12">
-                            <div class="card mb-4">
-                                <div class="card-header py-3">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <h5 class="mb-0">Tổng hoá đơn</h5>
-                                        </div>
-                                        <div class="col-6 text-right">
-                                            <button type="button" class="btn btn-dark" data-toggle="modal"
-                                                    data-target="#exampleModalCenterProduct">
-                                                <i class="fa-solid fa-shirt" style="color: #ffffff"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-dark" data-toggle="modal"
-                                                    data-target="#exampleModalCenter">
-                                                <i class="fa-regular fa-user" style="color: #ffffff;"></i>
-                                            </button>
+
+    <aside class="chinh" th:align="center" style="float: right; width: 350px">
+        <h3 align="center">Thông tin hóa đơn</h3>
+
+        <form th:action="@{/tiger/pos/thanhtoan}" method="post" th:object="${hoadoncho}">
+            <table style="width: 100%; font-size: 14px" align="center">
+                <tr>
+                    <td class="noidung">Mã hóa đơn:</td>
+                    <td>
+                        <input type="text" class="nhapvao" th:field="*{id}" th:id="idHdDuocChon" hidden>
+                        <input type="text" class="nhapvao" th:field="*{code}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="noidung">Người thực hiện</td>
+                    <td>
+                        <input type="number" class="nhapvao" th:field="*{employee.id}" hidden>
+                        <input type="text" class="nhapvao" th:field="*{employee.name}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="noidung">Khách hàng</td>
+                    <td>
+<!--                                                <input type="number" class="nhapvao" th:field="*{customer.id}" hidden>-->
+                        <button type="button" class="btn btn-primary" style="width: 75%" data-bs-toggle="modal" data-bs-target="#modalKH">
+                            [(${khUsername})]
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="modalKH" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Thông tin khách hàng</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div th:if="${hoadoncho.customer == null}">Chưa có khách</div>
+                                        <div th:unless="${hoadoncho.customer == null}">
+                                            <table class="thongtinkhach" align="left">
+                                                <tr class="thongtinkhach">
+                                                    <td class="thongtinkhach" rowspan="4"><img th:src="@{${'/assets/avatars/'+hoadoncho.customer.avatar}}" alt="" srcset="" style="width: 100px"/></td>
+                                                    <td class="thongtinkhach" align="left"><h4>Khách hàng: [(${hoadoncho.customer.name})]</h4></td>
+                                                </tr>
+                                                <tr class="thongtinkhach">
+                                                    <td class="thongtinkhach" align="left">SĐT: [(${hoadoncho.customer.phoneNumber})]</td>
+                                                </tr>
+                                                <tr class="thongtinkhach">
+                                                    <td class="thongtinkhach" align="left">Email: [(${hoadoncho.customer.email})]</td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush">
-                                        <li th:if="${tempBill.customerName}"
-                                            class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                            Tên Khách Hàng:
-                                            <span th:text="${tempBill.customerName}"></span>
-                                        </li>
-                                        <li
-                                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                            Mã Hoá Đơn:
-                                            <span id="billCode" th:text="${tempBill.billCode}"></span>
-                                        </li>
-                                        <li
-                                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                            Tổng Tiền:
-                                            <span th:text="${tempBill.totalCartPrice != null} ? ${tempBill.totalCartPrice} +' VNĐ' : '0' +' VNĐ'"></span>
-                                        </li>
-                                        <!--                                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">-->
-                                        <!--                                            Shipping-->
-                                        <!--                                            <span>Gratis</span>-->
-                                        <!--                                        </li>-->
-                                        <li
-                                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                            Tiền khách phải trả:
-                                            <span id="khachPhaiTra"
-                                                  th:text="${tempBill.totalCartPrice != null} ? ${tempBill.totalCartPrice} +' VNĐ' : '0' +' VNĐ'"></span>
-                                        </li>
-                                        <li
-                                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                            Tiền khách đưa:
-                                            <input type="text" id="khachDua" class="w3-input"
-                                                   oninput="calCashBack()"
-                                                   value="0"></input>
-                                        </li>
-                                        <li
-                                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                            Tiền thừa trả khách:
-                                            <span id="tienThua">0 VNĐ</span>
-                                        </li>
-                                        <!--                                        <li-->
-                                        <!--                                                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">-->
-                                        <!--                                            <div>-->
-                                        <!--                                                <strong>Tổng tiền</strong>-->
-                                        <!--                                                <strong>-->
-                                        <!--                                                    <p class="mb-0">(including VAT)</p>-->
-                                        <!--                                                </strong>-->
-                                        <!--                                            </div>-->
-                                        <!--                                            <span><strong-->
-                                        <!--                                                    th:text="${tempBill.totalCartPrice != null} ? ${tempBill.totalCartPrice} +' VNĐ' : '0' +' VNĐ'"></strong></span>-->
-                                        <!--                                        </li>-->
-                                    </ul>
-                                    <hr>
-                                    <div id="radios">
-                                        <label for="pos" class="material-icons">
-                                            <input type="radio" name="mode" id="pos" value="pos" checked/>
-                                            <span><i class="fa-solid fa-cash-register"></i></span>
-                                        </label>
-                                        <label for="vietqr" class="material-icons">
-                                            <input type="radio" name="mode" id="vietqr" value="vietqr"/>
-                                            <span><i class="fa-solid fa-money-bill-transfer"></i></span>
-                                        </label>
-                                        <!--                                        <label for="walking" class="material-icons">-->
-                                        <!--                                            <input type="radio" name="mode" id="walking" value="walking"/>-->
-                                        <!--                                            <span>&#xE536;</span>-->
-                                        <!--                                        </label>-->
+                                    <div class="modal-footer">
+                                        <a type="button" class="btn btn-primary" href="/tiger/pos/listKH_tai_quay" th:onclick="return dachonHD()">
+                                            Chọn khách hàng khác
+                                        </a>
+                                        <a type="button" class="btn btn-danger" href="/tiger/pos/listKH_tai_quay/huy_KH" th:onclick="return dachonHD()">
+                                            Xóa thông tin
+                                        </a>
                                     </div>
-                                    <button type="button" class="btn btn-dark btn-lg btn-block" onclick="thanhToan()">
-                                        Thanh Toán
-                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="noidung">Tổng giá trị:</td>
+                    <td><input type="number" class="nhapvao" th:field="*{price}" readonly></td>
+                </tr>
+                <tr>
+                    <td class="noidung">Voucher:</td>
+                    <td>
 
-    <!-- Popup content -->
-    <div id="imagePopup" class="popup">
-        <!-- Close button -->
-        <span onclick="closeImagePopup()"
-              style="cursor: pointer; position: absolute; top: 10px; right: 10px;">&times;</span>
-        <!-- Image container -->
-        <img id="popupImage" src="" alt="Popup Image" style="max-width: 100%; max-height: 80vh;">
-        <hr>
-        <div class="container text-center">
-            <button class="btn btn-dark">Xác nhận</button>
-        </div>
-    </div>
-
-    <!-- Overlay -->
-    <div id="overlay" class="overlay" onclick="closeImagePopup()"></div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Tìm kiếm khách hàng</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="form-inline" style="text-align:center;">
-                                <input id="keyword" class="form-control mr-sm-2" type="search" placeholder="Search"
-                                       aria-label="Search" oninput="searchAndReplace()"
-                                       th:value="${keyword} == null ? '' : ${keyword}">
-                                <!--                            <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="searchAndReplace()">Search-->
-                                <!--                            </button>-->
+                        <button type="button" class="btn btn-primary" style="width: 75%" data-bs-toggle="modal" data-bs-target="#modalVoucher">
+                            [(${voucherInfo})]
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="modalVoucher" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Danh sách voucher</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table>
+                                            <tr>
+                                                <th>Mã voucher</th>
+                                                <th>Tên voucher</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr th:each="k: ${listVoucher}" class="gachphai">
+                                                <td>[(${k.code})]</td>
+                                                <td>[(${k.name})]</td>
+                                                <td><a th:href="@{/tiger/pos/chonVoucher/{id}(id=${k.id})}" class="btn btn-primary" style="background-color: dodgerblue" th:onclick="return dachonHD()">Chọn</a></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a type="button" class="btn btn-danger" href="/tiger/pos/listKH_tai_quay/huy_vcr" th:onclick="return dachonHD()">
+                                            Hủy voucher
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="modal_replace">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="noidung">Giá trị voucher</td>
+                    <td>
+                        <input type="text" readonly class="nhapvao" th:value="${giatrivoucher}">
+                    </td>
+                </tr>
 
+                <tr>
+                    <td class="noidung" for="tienCanThanhToan">Tiền phải trả:</td>
+                    <td><input type="number" class="nhapvao" id="giaSale"  th:field="*{totalPrice}" readonly></td>
+                </tr>
+                <tr>
+                    <td class="noidung" for="tienKhachDua">Tiền khách đưa:</td>
+                    <td>
+                        <input type="number" class="nhapvao" id="tienKhachDua"  th:field="*{discountAmount}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="noidung" for="tienThua">Tiền thừa:</td>
+                    <td>
+                        <input type="number"  id="tienThua" class="nhapvao" readonly>
+                    </td>
+                </tr>
+            </table>
+
+
+
+
+            <div style="display: flex; justify-content: space-evenly;">
+                <button type="submit" class="btn btn-primary" onclick="return myFunction1()">Thanh Toán</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Đổi hóa đơn</button>
+            </div>
+
+        </form>
+        <br> <br>
+
+        <!-- Modal Start -->
+        <div class="modal" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Danh sách hóa đơn chờ</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <!--                    <button type="button" class="btn btn-primary">Save changes</button>-->
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <table class="danhsach">
+                            <tr class="gachphai">
+                                <th class="gachphai">ID</th>
+                                <th class="gachphai">Tên Hóa Đơn</th>
+                                <th class="gachphai">Thao tác</th>
+                            </tr>
+                            <p th:each="k : ${danhsachhoadon}">
+                                <tr class="gachphai">
+                                    <td class="gachphai">[(${k.id})]</td>
+                                    <td class="gachphai">[(${k.code})]</td>
+
+                                    <td class="gachphai">
+                                        <a th:href="@{/tiger/pos/chonHD/{id}(id=${k.id})}" class="btn btn-primary" style="background-color: dodgerblue">Chọn</a>
+                                        <a th:href="@{/tiger/pos/xoa/{id}(id=${k.id})}" class="btn btn-danger" style="background-color: crimson">Xóa</a>
+                                    </td>
+                                </tr>
+                            </p>
+                        </table>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Thoát</button>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Modal Product -->
-    <div class="modal fade" id="exampleModalCenterProduct" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitleProduct">Tìm kiếm sản phẩm</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="form-inline">
-                                <input id="keywordProduct" class="form-control mr-sm-2" type="search"
-                                       placeholder="Search"
-                                       aria-label="Search" oninput="searchAndReplaceProduct()"
-                                       th:value="${keywordProduct} == null ? '' : ${keywordProduct}">
-                                <!--                            <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="searchAndReplace()">Search-->
-                                <!--                            </button>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div id="modal_product_replace">
+        <!-- Modal End -->
+    </aside>
 
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <!--                    <button type="button" class="btn btn-primary">Save changes</button>-->
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="collapse" id="collapseExample">
-        <div class="card card-body">
-            <main>
-                <div id="reader"></div>
-                <div id="result"></div>
-            </main>
-        </div>
-        <script th:inline="javascript" th:src="@{/admin/assets/js/pos.js}"></script>
-    </div>
+</section>
+
 </div>
+
 </body>
 </html>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<style>
+    article, aside{
+        background-color: white;
+    }
+    table,tr,th,td{
+        border:none;
+        padding: 4px;
+    }
+    .danhsach{
+        width: 96%;
+        font-family: Arial;
+    }
+    .gachphai{
+        border: none;
+        border-bottom: 1px solid black;
+        border-collapse: collapse;
+    }
+    .noidung{
+        text-align: right;
+        font-size: 15px;
+        font-family: Arial;
+        border: none;
+    }
+    a:hover{
+        text-decoration: none;
+        color: white;
+    }
+    .cochuTTSP{
+        font-size: 14px;
+    }
+
+    .nhapvao{
+        height: 18px;
+        border: none;
+        border-bottom: 1px solid black;
+    }
+    .thongtinkhach{
+        border-collapse: collapse;
+    }
+</style>
+
+<script th:inline="javascript">
+    let thieutienko = false;
+
+    function myFunction1() {
+        let kiemtrahoadon = dachonHD();
+
+        if (kiemtrahoadon==false){
+            return kiemtrahoadon;
+        }
+        let text = "Bạn chắc chắn muốn thanh toán không";
+        let kt = confirm(text);
+        if (kt == true) {
+            if (thieutienko == false){
+                confirm("Thanh toán thành công");
+                return true;
+            } else {
+                alert("Khách đưa không đủ tiền");
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    function dachonHD() {
+        const kiemtraidHd = document.getElementById('idHdDuocChon').value;
+        if(!kiemtraidHd){
+            alert("Yêu cầu chọn hóa đơn");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function taoHD(x) {
+        const soLuongHd = parseInt(x);
+        if (soLuongHd>=5){
+            alert("Số lượng hóa đơn tối đa là 5");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function kiemsoluong(slTrongGio, slCaKho, idonhap){
+        const ma = 'slcua'+idonhap;
+        const soluongnhap = document.getElementById(ma).value;
+        const tongKho = slTrongGio + slCaKho;
+        if(soluongnhap<1){
+            alert('Số lượng không hợp lệ');
+            return false;
+        }else if(soluongnhap>tongKho){
+            alert('Trong cửa hàng chỉ có '+tongKho+" sản phẩm này");
+            return false;
+        }else {
+            alert("Số lượng sản phẩm trong giỏ đã được đổi thành "+soluongnhap);
+            return true;
+        }
+    }
+
+    function xacnhanxoa(khd){
+        if (khd==2){
+            let kiemHD = kiemtrahdduocchon();
+            if(kiemHD==false){
+                return kiemHD;
+            }
+        }
+        let xacnhan = confirm("Bạn có muốn xóa không");
+        return xacnhan;
+    }
+
+    function tinhTienThua() {
+        const tongTien = parseFloat(document.getElementById("giaSale").value);
+        const tienKhachDua = parseFloat(document.getElementById("tienKhachDua").value);
+        const tienThua = tienKhachDua - tongTien;
+
+        const tienThuaInput = document.getElementById("tienThua");
+        if (tienThua >= 0) {
+            tienThuaInput.value = tienThua.toFixed(2);
+            thieutienko = false;
+        } else {
+            tienThuaInput.value = tienThua.toFixed(2);
+            thieutienko = true;
+        }
+
+    }
+
+    function demhd(x){
+        if (x>=5){
+            alert("Số hóa đơn chờ tối đa là 5");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    document.getElementById("tienKhachDua").addEventListener("change", tinhTienThua);
+    document.getElementById("giaSale").addEventListener("change", tinhTienThua);
+
+</script>

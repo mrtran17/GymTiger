@@ -45,4 +45,5 @@ public interface VoucherService {
             int page);
 
 
+    List<Voucher> ActiveVoucher();
 }

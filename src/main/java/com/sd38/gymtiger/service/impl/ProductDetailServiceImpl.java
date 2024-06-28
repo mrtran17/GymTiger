@@ -288,4 +288,14 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     public List<ProductDetail> findAllActive() {
         return productDetailRepository.findAllByStatusOrderByIdDesc(1);
     }
+
+    @Override
+    public List<ProductDetail> locSpTaiQuay(String s, String colorCode, String matrCode, String sizeName) {
+        return productDetailRepository.locSpTaiQuay(s, colorCode, matrCode, sizeName);
+    }
+
+    @Override
+    public void simplizedUpdate(Integer id, ProductDetail productDetail) {
+        productDetailRepository.save(productDetail);
+    }
 }
