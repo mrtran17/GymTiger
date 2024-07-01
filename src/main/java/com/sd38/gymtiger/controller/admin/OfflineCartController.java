@@ -72,7 +72,12 @@ public class OfflineCartController {
         String currentUserName = principal.getName();
         currentUser = accountService.findFirstByEmail(currentUserName);
 
-        List<Bill> listHdCho = billService.findAllByStatus(10);
+        List<Bill> listHdCho = new ArrayList<>();
+        for (Bill k: billService.findAllByStatus(10)){
+            if (k.getType()==1){
+                listHdCho.add(k);
+            }
+        }
         List<Voucher> danhsachvoucher = voucherService.ActiveVoucher();
         if (bill.getId()!=null){
             List<BillDetail> danhsachHDCT = billService.getLstDetailByBillId(bill.getId());
@@ -107,7 +112,7 @@ public class OfflineCartController {
 
             Bill hoadonmoi = new Bill();
             Integer soluong = billService.getAllBill().size()+1;
-            hoadonmoi.setType(0);
+            hoadonmoi.setType(1);
             hoadonmoi.setCode("MHD" + soluong);
             hoadonmoi.setOrderDate(ngayhomnay);
             hoadonmoi.setPrice(BigDecimal.valueOf(0));
@@ -170,7 +175,7 @@ public class OfflineCartController {
         hoadon.setEmployee(currentUser);
         hoadon.setCustomer(bill.getCustomer());
         hoadon.setVoucher(bill.getVoucher());
-        hoadon.setType(0);
+        hoadon.setType(bill.getType());
 
         billService.addBillPos(hoadon);
         bill = new Bill();
