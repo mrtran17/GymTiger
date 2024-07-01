@@ -47,31 +47,6 @@
             </div>
 
             <div class="card-body card-block">
-                <form id="materialExcel" enctype="multipart/form-data">
-                    <div class="card-footer">
-                        <div class="custom-file">
-                            <input type="file" id="importFile" name="excelFile" accept=".xls, .xlsx"
-                                   onchange="setFileName()">
-                            <label class="custom-file-label" for="importFile">Chọn tệp excel</label>
-                        </div>
-                        <div class="mt-2 d-flex justify-content-between">
-                            <div class="d-flex align-content-center">
-                                <button type="button"
-                                        onclick="importExcel('materialExcel', 'importFile', 'errorExcel', 'material')"
-                                        class="btn btn-success">
-                                    <i class="fa-solid fa-file-excel px-4"></i>
-                                </button>
-                                <div id="errorExcel" class="ml-2" style="color: red;"></div>
-                            </div>
-                            <div>
-                                <button class="btn btn-danger" type="button"
-                                        onclick="downLoadTemplate('materialExcel', 'material')">
-                                    <i class="fa-solid fa-table px-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
                 <br>
                 <form id="materialForm" class="form-horizontal">
                     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
