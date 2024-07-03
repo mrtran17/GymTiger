@@ -122,33 +122,33 @@
                                                                id="errorName"></small>
                                                     </div>
                                                 </div>
-                                                <div class="form-group row">
-                                                    <label class="col-sm-2 col-form-label font-weight-bold">Số
-                                                        lượng</label>
-                                                    <div class="col-sm-10">
-                                                        <input type="text" class="form-control" name="quantity"
-                                                               id="quantity"
-                                                               oninput="onInputText('errorQuantity')">
-                                                        <small class="" style="color: red"
-                                                               id="errorQuantity"></small>
-                                                    </div>
-                                                </div>
+<!--                                                <div class="form-group row">-->
+<!--                                                    <label class="col-sm-2 col-form-label font-weight-bold">Số-->
+<!--                                                        lượng</label>-->
+<!--                                                    <div class="col-sm-10">-->
+<!--                                                        <input type="text" class="form-control" name="quantity"-->
+<!--                                                               id="quantity"-->
+<!--                                                               oninput="onInputText('errorQuantity')">-->
+<!--                                                        <small class="" style="color: red"-->
+<!--                                                               id="errorQuantity"></small>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+
+<!--                                                <div class="form-group row">-->
+<!--                                                    <label class="col-sm-2 col-form-label font-weight-bold">Giá tối-->
+<!--                                                        thiểu</label>-->
+<!--                                                    <div class="col-sm-10">-->
+<!--                                                        <input type="text" class="form-control" name="minimumPrice"-->
+<!--                                                               id="minimumPrice"-->
+<!--                                                               oninput="onInputText('errorMinimumPrice')">-->
+<!--                                                        <small class="" style="color: red"-->
+<!--                                                               id="errorMinimumPrice"></small>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
 
                                                 <div class="form-group row">
-                                                    <label class="col-sm-2 col-form-label font-weight-bold">Giá tối
-                                                        thiểu</label>
-                                                    <div class="col-sm-10">
-                                                        <input type="text" class="form-control" name="minimumPrice"
-                                                               id="minimumPrice"
-                                                               oninput="onInputText('errorMinimumPrice')">
-                                                        <small class="" style="color: red"
-                                                               id="errorMinimumPrice"></small>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-sm-2 col-form-label font-weight-bold">Số tiền
-                                                        giảm</label>
+                                                    <label class="col-sm-2 col-form-label font-weight-bold">Giá trị
+                                                        giảm(%)</label>
                                                     <div class="col-sm-10">
                                                         <input type="text" class="form-control" name="value"
                                                                id="value"
@@ -218,35 +218,35 @@
                                                         return true;
                                                     }
 
-                                                    checkQuantity = () => {
-                                                        let isQuantity = document.getElementById('quantity').value;
-                                                        if (!isNonNegativeInteger(isQuantity)) {
-                                                            document.getElementById('errorQuantity').innerHTML = 'Vui lòng nhập một số nguyên không âm';
-                                                            return false;
-                                                        }
+                                                    // checkQuantity = () => {
+                                                    //     let isQuantity = document.getElementById('quantity').value;
+                                                    //     if (!isNonNegativeInteger(isQuantity)) {
+                                                    //         document.getElementById('errorQuantity').innerHTML = 'Vui lòng nhập một số nguyên không âm';
+                                                    //         return false;
+                                                    //     }
+                                                    //
+                                                    //     isQuantity = parseInt(isQuantity);
+                                                    //
+                                                    //     if (isQuantity <= 0) {
+                                                    //         document.getElementById('errorQuantity').innerHTML = 'Số lượng phải lớn hơn   0';
+                                                    //         return false;
+                                                    //     }
+                                                    //
+                                                    //     if (isQuantity > 30) {
+                                                    //         document.getElementById('errorQuantity').innerHTML = 'Số lượng voucher cao nhất là 30';
+                                                    //         return false;
+                                                    //     }
+                                                    //
+                                                    //     return true;
+                                                    // }
 
-                                                        isQuantity = parseInt(isQuantity);
-
-                                                        if (isQuantity <= 0) {
-                                                            document.getElementById('errorQuantity').innerHTML = 'Số lượng phải lớn hơn   0';
-                                                            return false;
-                                                        }
-
-                                                        if (isQuantity > 30) {
-                                                            document.getElementById('errorQuantity').innerHTML = 'Số lượng voucher cao nhất là 30';
-                                                            return false;
-                                                        }
-
-                                                        return true;
-                                                    }
-
-                                                    function isNonNegativeInteger(value) {
-                                                        return /^\d+$/.test(value);
-                                                    }
+                                                    // function isNonNegativeInteger(value) {
+                                                    //     return /^\d+$/.test(value);
+                                                    // }
 
                                                     checkValue = () => {
                                                         let isValue = document.getElementById('value').value;
-                                                        let minimumPrice = document.getElementById('minimumPrice').value;
+                                                        //let minimumPrice = document.getElementById('minimumPrice').value;
 
                                                         if (!isNumeric(isValue)) {
                                                             document.getElementById('errorValue').innerHTML = 'Vui lòng nhập một giá trị số';
@@ -255,15 +255,20 @@
 
                                                         isValue = parseFloat(isValue);
 
-                                                        if (isValue <= 10000) {
-                                                            document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải lớn hơn 10000đ';
+                                                        if (isValue > 60) {
+                                                            document.getElementById('errorValue').innerHTML = 'Phần trăm giảm phải bé hơn hoặc bằng 60';
                                                             return false;
                                                         }
 
-                                                        if (isValue !== '' && minimumPrice !== '' && isValue >= parseFloat(minimumPrice)) {
-                                                            document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải nhỏ hơn giá tối thiểu.';
+                                                        if (isValue < 5) {
+                                                            document.getElementById('errorValue').innerHTML = 'Phần trăm giảm phải lớn hơn hoặc bằng 5';
                                                             return false;
                                                         }
+
+                                                        // if (isValue !== '' && minimumPrice !== '' && isValue >= parseFloat(minimumPrice)) {
+                                                        //     document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải nhỏ hơn giá tối thiểu.';
+                                                        //     return false;
+                                                        // }
 
                                                         return true;
                                                     }
@@ -272,32 +277,32 @@
                                                         return !isNaN(parseFloat(value)) && isFinite(value);
                                                     }
 
-                                                    checkMinimumPrice = () => {
-                                                        let isValue = document.getElementById('value').value;
-                                                        let isMinimumPrice = document.getElementById('minimumPrice').value;
-                                                        if (!isNumeric(isMinimumPrice)) {
-                                                            document.getElementById('errorMinimumPrice').innerHTML = 'Vui lòng nhập một giá trị số';
-                                                            return false;
-                                                        }
+                                                    // checkMinimumPrice = () => {
+                                                    //     let isValue = document.getElementById('value').value;
+                                                    //     let isMinimumPrice = document.getElementById('minimumPrice').value;
+                                                    //     if (!isNumeric(isMinimumPrice)) {
+                                                    //         document.getElementById('errorMinimumPrice').innerHTML = 'Vui lòng nhập một giá trị số';
+                                                    //         return false;
+                                                    //     }
+                                                    //
+                                                    //     isMinimumPrice = parseFloat(isMinimumPrice);
+                                                    //
+                                                    //     if (isMinimumPrice < 100000) {
+                                                    //         document.getElementById('errorMinimumPrice').innerHTML = 'Giá trị tối thiểu lớn hơn 100000đ';
+                                                    //         return false;
+                                                    //     }
+                                                    //
+                                                    //     if (isValue !== '' && isMinimumPrice !== '' && parseFloat(isValue) > isMinimumPrice) {
+                                                    //         document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải nhỏ hơn hoặc bằng giá tối thiểu.';
+                                                    //         return false;
+                                                    //     }
+                                                    //
+                                                    //     return true;
+                                                    // }
 
-                                                        isMinimumPrice = parseFloat(isMinimumPrice);
-
-                                                        if (isMinimumPrice < 100000) {
-                                                            document.getElementById('errorMinimumPrice').innerHTML = 'Giá trị tối thiểu lớn hơn 100000đ';
-                                                            return false;
-                                                        }
-
-                                                        if (isValue !== '' && isMinimumPrice !== '' && parseFloat(isValue) > isMinimumPrice) {
-                                                            document.getElementById('errorValue').innerHTML = 'Số tiền giảm phải nhỏ hơn hoặc bằng giá tối thiểu.';
-                                                            return false;
-                                                        }
-
-                                                        return true;
-                                                    }
-
-                                                    function isNumeric(value) {
-                                                        return !isNaN(parseFloat(value)) && isFinite(value);
-                                                    }
+                                                    // function isNumeric(value) {
+                                                    //     return !isNaN(parseFloat(value)) && isFinite(value);
+                                                    // }
 
                                                     checkStartDate = () => {
                                                         let startDateInput = document.getElementById('startDate');
@@ -344,12 +349,12 @@
 
                                                     validate = () => {
                                                         let isName = checkName();
-                                                        let isQuantity = checkQuantity();
+                                                        // let isQuantity = checkQuantity();
                                                         let isValue = checkValue();
-                                                        let isMinimumPrice = checkMinimumPrice()
+                                                        // let isMinimumPrice = checkMinimumPrice()
                                                         let isStartDate = checkStartDate()
                                                         let isEndDate = checkEndDate()
-                                                        if (isName === true && isQuantity === true && isValue === true && isMinimumPrice === true && isStartDate === true && isEndDate === true) {
+                                                        if (isName === true && isValue === true && isStartDate === true && isEndDate === true) {
                                                             return true;
                                                         }
                                                     }
@@ -406,9 +411,9 @@
                             <tr>
                                 <th scope="col">Mã voucher</th>
                                 <th scope="col">Tên voucher</th>
-                                <th scope="col">Số lượng</th>
+<!--                                <th scope="col">Số lượng</th>-->
                                 <th scope="col">Giá trị giảm</th>
-                                <th scope="col">Giá thấp nhất</th>
+<!--                                <th scope="col">Giá thấp nhất</th>-->
                                 <th scope="col">Ngày bắt đầu</th>
                                 <th scope="col">Ngày kết thúc</th>
                                 <th scope="col">Trạng thái</th>
@@ -419,9 +424,9 @@
                             <tr th:each="items:${pageVoucher}">
                                 <td th:text="${items.code}"></td>
                                 <td th:text="${items.name}"></td>
-                                <td th:text="${items.quantity}"></td>
+<!--                                <td th:text="${items.quantity}"></td>-->
                                 <td th:text="${#numbers.formatDecimal(items.value, 0, 0)}"></td>
-                                <td th:text="${#numbers.formatDecimal(items.minimumPrice, 0, 0)}"></td>
+<!--                                <td th:text="${#numbers.formatDecimal(items.minimumPrice, 0, 0)}"></td>-->
                                 <td th:text="${#dates.format(items.startDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
                                 <td th:text="${#dates.format(items.endDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
                                 <td>

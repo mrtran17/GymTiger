@@ -69,16 +69,19 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public List<Voucher> ActiveVoucher() {
+        scheduleUpdateExpiredVouchers();
         return voucherRepository.findAllByStatusOrderByIdDesc(1);
     }
 
     @Override
     public List<Voucher> getAll() {
+        scheduleUpdateExpiredVouchers();
         return voucherRepository.findAllByStatusOrderByIdDesc(1);
     }
 
     @Override
     public Page<Voucher> getAll(Integer page) {
+        scheduleUpdateExpiredVouchers();
         Pageable pageable = PageRequest.of(page, 5);
         return voucherRepository.findAllByStatusOrderByIdDesc(pageable);
     }
@@ -112,6 +115,8 @@ public class VoucherServiceImpl implements VoucherService {
         if (checkName(voucher.getName())) {
             voucher.setCreateDate(new Date());
             voucher.setUpdateDate(new Date());
+            voucher.setQuantity(5000);
+            voucher.setMinimumPrice(BigDecimal.valueOf(1.0));
             voucher.updateStatus();
             voucher.setCode(generateCode());
             voucherRepository.save(voucher);
@@ -131,7 +136,10 @@ public class VoucherServiceImpl implements VoucherService {
                 voucher.setCode(oldVoucher.getCode());
                 voucher.setCreateDate(oldVoucher.getCreateDate());
                 voucher.setUpdateDate(new Date());
+                voucher.setQuantity(5000);
+                voucher.setMinimumPrice(BigDecimal.valueOf(1.0));
                 voucher.setStatus(oldVoucher.getStatus());
+
                 voucher.updateStatus();
                 voucherRepository.save(voucher);
                 return true;
