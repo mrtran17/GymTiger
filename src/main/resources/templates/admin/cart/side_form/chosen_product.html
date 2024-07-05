@@ -9,24 +9,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Quầy hàng</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">-->
 </head>
 <body>
 <section layout:fragment="content">
-  <div><h1 align="center">Chi tiết sản phẩm</h1></div>
-  <aside style="float: left; width: 42%">
+  <div><h1 align="center" class="daude" style="border: none">Chi tiết sản phẩm</h1></div>
+  <aside style="float: left; width: 30%">
     <img th:src="@{${'/assets/product/'+thongtinSP.productDetail.product.listImage.get(0).name}}" alt="@{/images/favicon.png}" srcset="" style="width: 100%"/>
   </aside>
-  <article>
+  <article style="float: right; width: 67%">
     <form th:action="@{/tiger/pos/them_vao_hd}" method="post" th:object="${thongtinSP}">
-      <article style="float: right; width: 55%">
         <table>
           <tr>
-            <td>
-              <h2>[(${thongtinSP.productDetail.product.name})]</h2>
+            <th>
+              <h1>[(${thongtinSP.productDetail.product.name})]</h1>
               <input type="text" name="" th:field="*{productDetail.product.name}" hidden>
               <input type="text" name="" th:field="*{productDetail.id}" hidden>
-            </td>
+            </th>
           </tr>
           <tr>
             <td>
@@ -66,7 +65,7 @@
             <td><a href="/tiger/pos/litSP" type="button" class="btn btn-warning" style="background-color: #ffaf00">Hủy</a></td>
           </tr>
         </table>
-      </article>
+<!--      </article>-->
     </form>
 
   </article>
@@ -79,10 +78,10 @@
 
 </body>
 </html>
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-<link rel="stylesheet" th:href="@{/css/kieuBanTaiQuay.css}">
+<link rel="stylesheet" th:href="@{/admin/assets/css/kieuBanTaiQuay.css}">
 <style>
   table,tr,th,td{
     border:none;
@@ -96,6 +95,9 @@
     height: auto;
     background-color: white;
     border: 1px solid white;
+  }
+  td{
+    font-size: 20px;
   }
 </style>
 <script th:inline="javascript">
