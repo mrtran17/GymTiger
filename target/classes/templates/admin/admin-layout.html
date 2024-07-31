@@ -202,7 +202,6 @@
 
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
                 <li class="nav-item nav-profile">
@@ -216,12 +215,6 @@
                             </div>
                         </div>
                     </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{#}">
-                        <i class="menu-icon mdi mdi-television"></i>
-                        <span class="menu-title">Thống kê</span>
-                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
@@ -269,6 +262,30 @@
                     <a class="nav-link" th:href="@{/tiger/bill}">
                         <i class="menu-icon mdi mdi-sticker"></i>
                         <span class="menu-title">Hoá đơn</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tiger/statistic/page}">
+                        <i class="menu-icon mdi mdi-sticker"></i>
+                        <span class="menu-title">Thống kê</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tiger/account/page}">
+                        <i class="menu-icon mdi mdi-sticker"></i>
+                        <span class="menu-title">Tài khoản</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tiger/promotion/page}">
+                        <i class="menu-icon mdi mdi-sticker"></i>
+                        <span class="menu-title">Khuyến mại</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tiger/voucher/page}">
+                        <i class="menu-icon mdi mdi-sticker"></i>
+                        <span class="menu-title">Voucher</span>
                     </a>
                 </li>
             </ul>
